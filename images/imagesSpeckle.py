@@ -23,17 +23,21 @@ for i in range(0, 5):
 medias = []
 varianzas = []
 desviaciones = []
-razones = []
+razones_md = []
+razones_mv = []
 
 for clave, valor in imagenes.items():
     media = np.mean(valor)
     varianza = np.var(valor)
     desviacion = np.std(valor)
-    razon = media/desviacion
+    razon_md = media/desviacion
+    razones_mv = varianza/media
+
     medias.append(f"la media del difusor {clave} es {media}")
     varianzas.append(f"la varianza del difusor {clave} es {varianza}")
     desviaciones.append(f"la desviación estándar del difusor {clave} es {desviacion}")
-    razones.append(razon)
+    razones_md.append(razon_md)
+    razones_mv.append(razones_mv)
 
-print(razones)
-
+print(razones_md)
+print(razones_mv)
