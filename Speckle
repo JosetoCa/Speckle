@@ -1,0 +1,241 @@
+[33mcommit 5418cffdb52a56787cb729c8c908a195e174933d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Author: Jose Camacho <jose.camacho1@udea.edu.co>
+Date:   Wed Feb 26 17:33:00 2025 -0500
+
+    puse un nuevo print
+
+[1mdiff --git a/images/imagesSpeckle.py b/images/imagesSpeckle.py[m
+[1mindex fa8d0f4..7bfac74 100644[m
+[1m--- a/images/imagesSpeckle.py[m
+[1m+++ b/images/imagesSpeckle.py[m
+[36m@@ -41,5 +41,4 @@[m [mfor clave, valor in imagenes.items():[m
+ [m
+ print(razones_md)[m
+ print(razones_mv)[m
+[31m-[m
+[31m-[m
+[32m+[m[32m# print(medias)[m
+\ No newline at end of file[m
+
+[33mcommit 8383857d2f97221474e6b9e190f481f72b34530d[m
+Author: Jose Camacho <jose.camacho1@udea.edu.co>
+Date:   Wed Feb 26 17:24:28 2025 -0500
+
+    primera vista de lo que es un commit, Dios. Hago el commit sobre todos los archivos del repositorio
+
+[1mdiff --git a/images/imagesSpeckle.py b/images/imagesSpeckle.py[m
+[1mindex 3e63955..fa8d0f4 100644[m
+[1m--- a/images/imagesSpeckle.py[m
+[1m+++ b/images/imagesSpeckle.py[m
+[36m@@ -41,3 +41,5 @@[m [mfor clave, valor in imagenes.items():[m
+ [m
+ print(razones_md)[m
+ print(razones_mv)[m
+[41m+[m
+[41m+[m
+
+[33mcommit 66b7dddbe4734551fda15003c3963faabb598e7b[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Jose Camacho <jose.camacho1@udea.edu.co>
+Date:   Wed Feb 26 17:10:42 2025 -0500
+
+    Update imagesSpeckle.py
+
+[1mdiff --git a/images/imagesSpeckle.py b/images/imagesSpeckle.py[m
+[1mindex 4f61037..3e63955 100644[m
+[1m--- a/images/imagesSpeckle.py[m
+[1m+++ b/images/imagesSpeckle.py[m
+[36m@@ -23,17 +23,21 @@[m [mfor i in range(0, 5):[m
+ medias = [][m
+ varianzas = [][m
+ desviaciones = [][m
+[31m-razones = [][m
+[32m+[m[32mrazones_md = [][m
+[32m+[m[32mrazones_mv = [][m
+ [m
+ for clave, valor in imagenes.items():[m
+     media = np.mean(valor)[m
+     varianza = np.var(valor)[m
+     desviacion = np.std(valor)[m
+[31m-    razon = media/desviacion[m
+[32m+[m[32m    razon_md = media/desviacion[m
+[32m+[m[32m    razones_mv = varianza/media[m
+[32m+[m
+     medias.append(f"la media del difusor {clave} es {media}")[m
+     varianzas.append(f"la varianza del difusor {clave} es {varianza}")[m
+     desviaciones.append(f"la desviación estándar del difusor {clave} es {desviacion}")[m
+[31m-    razones.append(razon)[m
+[31m-[m
+[31m-print(razones)[m
+[32m+[m[32m    razones_md.append(razon_md)[m
+[32m+[m[32m    razones_mv.append(razones_mv)[m
+ [m
+[32m+[m[32mprint(razones_md)[m
+[32m+[m[32mprint(razones_mv)[m
+
+[33mcommit 99d6493187eace871458bbf8d47551b402a8af5b[m
+Author: JosetoCa <jose.camacho1@udea.edu.co>
+Date:   Tue Feb 25 22:52:11 2025 -0500
+
+    Create imagesSpeckle.py
+
+[1mdiff --git a/images/imagesSpeckle.py b/images/imagesSpeckle.py[m
+[1mnew file mode 100644[m
+[1mindex 0000000..4f61037[m
+[1m--- /dev/null[m
+[1m+++ b/images/imagesSpeckle.py[m
+[36m@@ -0,0 +1,39 @@[m
+[32m+[m[32mimport os[m
+[32m+[m[32mimport numpy as np[m
+[32m+[m[32mfrom PIL import Image[m
+[32m+[m
+[32m+[m
+[32m+[m[32mimagenes = {}[m
+[32m+[m[32mcarpeta_imagenes = os.path.dirname(__file__)[m
+[32m+[m
+[32m+[m[32mfor i in range(0, 5):[m
+[32m+[m[32m    for j in range(1,4):[m
+[32m+[m[41m        [m
+[32m+[m[32m        #asignamos los nombres de las variables que contienen las imágenes[m
+[32m+[m[32m        var_name = 'speckle_' + str(i) + '_' + str(j)[m
+[32m+[m[41m        [m
+[32m+[m[32m        #nombres y ruta de las imágenes a leer[m
+[32m+[m[32m        nombre_archivo = f'{i}-{j}.tif'[m
+[32m+[m[32m        ruta_archivo = os.path.join(carpeta_imagenes, nombre_archivo)[m
+[32m+[m
+[32m+[m[32m        #leemos las imágenes y las guardamos en un diccionario[m
+[32m+[m[32m        imagen = Image.open(ruta_archivo).convert('L')[m
+[32m+[m[32m        imagenes[var_name] = np.array(imagen)[m
+[32m+[m
+[32m+[m[32mmedias = [][m
+[32m+[m[32mvarianzas = [][m
+[32m+[m[32mdesviaciones = [][m
+[32m+[m[32mrazones = [][m
+[32m+[m
+[32m+[m[32mfor clave, valor in imagenes.items():[m
+[32m+[m[32m    media = np.mean(valor)[m
+[32m+[m[32m    varianza = np.var(valor)[m
+[32m+[m[32m    desviacion = np.std(valor)[m
+[32m+[m[32m    razon = media/desviacion[m
+[32m+[m[32m    medias.append(f"la media del difusor {clave} es {media}")[m
+[32m+[m[32m    varianzas.append(f"la varianza del difusor {clave} es {varianza}")[m
+[32m+[m[32m    desviaciones.append(f"la desviación estándar del difusor {clave} es {desviacion}")[m
+[32m+[m[32m    razones.append(razon)[m
+[32m+[m
+[32m+[m[32mprint(razones)[m
+[32m+[m
+
+[33mcommit c3937de9fae850e35817ade1ccb64884a601db30[m[33m ([m[1;32mimage_code[m[33m)[m
+Author: JosetoCa <163927360+JosetoCa@users.noreply.github.com>
+Date:   Tue Feb 25 21:22:30 2025 -0500
+
+    Add files via upload
+
+[1mdiff --git a/images/0-1.tif b/images/0-1.tif[m
+[1mnew file mode 100644[m
+[1mindex 0000000..75af3ea[m
+Binary files /dev/null and b/images/0-1.tif differ
+[1mdiff --git a/images/0-2.tif b/images/0-2.tif[m
+[1mnew file mode 100644[m
+[1mindex 0000000..6cfe5da[m
+Binary files /dev/null and b/images/0-2.tif differ
+[1mdiff --git a/images/0-3.tif b/images/0-3.tif[m
+[1mnew file mode 100644[m
+[1mindex 0000000..90ebf58[m
+Binary files /dev/null and b/images/0-3.tif differ
+[1mdiff --git a/images/1-1.tif b/images/1-1.tif[m
+[1mnew file mode 100644[m
+[1mindex 0000000..2c3d455[m
+Binary files /dev/null and b/images/1-1.tif differ
+[1mdiff --git a/images/1-2.tif b/images/1-2.tif[m
+[1mnew file mode 100644[m
+[1mindex 0000000..000e381[m
+Binary files /dev/null and b/images/1-2.tif differ
+[1mdiff --git a/images/1-3.tif b/images/1-3.tif[m
+[1mnew file mode 100644[m
+[1mindex 0000000..a7c9d55[m
+Binary files /dev/null and b/images/1-3.tif differ
+[1mdiff --git a/images/2-1.tif b/images/2-1.tif[m
+[1mnew file mode 100644[m
+[1mindex 0000000..4a48c2a[m
+Binary files /dev/null and b/images/2-1.tif differ
+[1mdiff --git a/images/2-2.tif b/images/2-2.tif[m
+[1mnew file mode 100644[m
+[1mindex 0000000..23d6394[m
+Binary files /dev/null and b/images/2-2.tif differ
+[1mdiff --git a/images/2-3.tif b/images/2-3.tif[m
+[1mnew file mode 100644[m
+[1mindex 0000000..d26b685[m
+Binary files /dev/null and b/images/2-3.tif differ
+[1mdiff --git a/images/3-1.tif b/images/3-1.tif[m
+[1mnew file mode 100644[m
+[1mindex 0000000..f0bf153[m
+Binary files /dev/null and b/images/3-1.tif differ
+[1mdiff --git a/images/3-2.tif b/images/3-2.tif[m
+[1mnew file mode 100644[m
+[1mindex 0000000..3cf0b69[m
+Binary files /dev/null and b/images/3-2.tif differ
+[1mdiff --git a/images/3-3.tif b/images/3-3.tif[m
+[1mnew file mode 100644[m
+[1mindex 0000000..afea9a5[m
+Binary files /dev/null and b/images/3-3.tif differ
+[1mdiff --git a/images/4-1.tif b/images/4-1.tif[m
+[1mnew file mode 100644[m
+[1mindex 0000000..0ebc99b[m
+Binary files /dev/null and b/images/4-1.tif differ
+[1mdiff --git a/images/4-2.tif b/images/4-2.tif[m
+[1mnew file mode 100644[m
+[1mindex 0000000..4db5a25[m
+Binary files /dev/null and b/images/4-2.tif differ
+[1mdiff --git a/images/4-3.tif b/images/4-3.tif[m
+[1mnew file mode 100644[m
+[1mindex 0000000..ffe36c8[m
+Binary files /dev/null and b/images/4-3.tif differ
+[1mdiff --git a/images/4-4.tif b/images/4-4.tif[m
+[1mnew file mode 100644[m
+[1mindex 0000000..18f9889[m
+Binary files /dev/null and b/images/4-4.tif differ
+[1mdiff --git a/images/N-1.tif b/images/N-1.tif[m
+[1mnew file mode 100644[m
+[1mindex 0000000..71538cd[m
+Binary files /dev/null and b/images/N-1.tif differ
+[1mdiff --git a/images/N-2.tif b/images/N-2.tif[m
+[1mnew file mode 100644[m
+[1mindex 0000000..9dcbe3b[m
+Binary files /dev/null and b/images/N-2.tif differ
+[1mdiff --git a/images/N-3.tif b/images/N-3.tif[m
+[1mnew file mode 100644[m
+[1mindex 0000000..5600a75[m
+Binary files /dev/null and b/images/N-3.tif differ
+[1mdiff --git a/images/prueba 4-4.tif b/images/prueba 4-4.tif[m
+[1mnew file mode 100644[m
+[1mindex 0000000..8d0b86f[m
+Binary files /dev/null and b/images/prueba 4-4.tif differ
+
+[33mcommit 9cd08271df58369cc0b0dff69855f575bf8300fa[m
+Author: JosetoCa <163927360+JosetoCa@users.noreply.github.com>
+Date:   Tue Feb 25 21:20:58 2025 -0500
+
+    Create readme.txt
+
+[1mdiff --git a/images/readme.txt b/images/readme.txt[m
+[1mnew file mode 100644[m
+[1mindex 0000000..1e76a3a[m
+[1m--- /dev/null[m
+[1m+++ b/images/readme.txt[m
+[36m@@ -0,0 +1 @@[m
+[32m+[m[32maquí van las imágenes tomadas a los difusores construidos[m
+
+[33mcommit d8e182d16354df02b6540afb0ff5d21630482338[m
+Author: JosetoCa <163927360+JosetoCa@users.noreply.github.com>
+Date:   Tue Feb 25 21:15:39 2025 -0500
+
+    Initial commit
+
+[1mdiff --git a/README.md b/README.md[m
+[1mnew file mode 100644[m
+[1mindex 0000000..5f7bfca[m
+[1m--- /dev/null[m
+[1m+++ b/README.md[m
+[36m@@ -0,0 +1,2 @@[m
+[32m+[m[32m# Speckle[m
+[32m+[m[32mDocumentos y códigos para el análisis del patrón producido por los difusores desarrollados por el grupo[m
