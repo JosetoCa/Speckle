@@ -10,4 +10,5 @@ Falta determinar la propación de incertidumbres y analizar cómo cambian las me
 
 ER: He creado el branch Speckle-Edgar-uno y he modificado el Readme. Todo desde el Desktop.
 
-Nueva línea
+ER: Está línea mientras Jose cambia en el main
+
