@@ -42,3 +42,5 @@ for clave, valor in imagenes.items():
 print(razones_md)
 print(razones_mv)
 # print(medias)
+
+
