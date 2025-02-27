@@ -6,3 +6,6 @@ Falta determinar la propación de incertidumbres y analizar cómo cambian las me
 ¿cómo se hará el análisis sobre los recuadros? ¿tomamos recuadros pequeños hallamos la media de la intensidad ahí y asumimos que ese es su valor de intensidad?
 
 ¿De qué otras formas se puede procesar las imágenes?
+
+
+ER: He creado el branch Speckle-Edgar-uno y he modificado el Readme. Todo desde el Desktop.
