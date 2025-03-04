@@ -26,6 +26,11 @@ class PropsSpeckle:
         except Exception as e:
             print(f"Ocurrió un error al leer el archivo: {e}")
             self.primera_linea = None
+
+
+## Métodos de la clase PropsSpeckle ##
+
+# Presentación en pantalla de la imagen
     def imagen(self, show=True):
         # Carga y muestra una imagen en escala de grises desde la ruta 
         # almacenada en el archivo de texto.
@@ -43,11 +48,17 @@ class PropsSpeckle:
             print(f"Error: La imagen '{ruta_imagen}' no se encontró.")
         except Exception as e:
             print(f"Ocurrió un error al abrir la imagen: {e}")
+
+
+# Cálculo de parámetros estadísticos
     def statics(self):
         # Calcula la media, varianza y la desviación estándar de la imagen
         self.media = np.mean(self.spec)
         self.desviacion = np.std(self.spec)
         self.varianza = np.var(self.spec)
+
+
+# Normalización de la imagen
     def normalizar(self):
         # Normaliza los  valores de intensidad de la imagen y actualiza
         # sus medeidas estadísticas.
@@ -55,8 +66,13 @@ class PropsSpeckle:
         self.media = np.mean(self.spec)
         self.desviacion = np.std(self.spec)
         self.varianza = np.var(self.spec)
+
+
+# Histograma de la imagen
     def histograma(self):
         # Genera un histograma de la imagen
         plt.hist(self.spec.flatten(), bins=256, density=True)
         plt.title('Histograma de la imagen')
+        plt.xlabel('Niveles de gris')
+        plt.ylabel('Frecuencia')
         plt.show()
