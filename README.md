@@ -7,8 +7,12 @@ Falta determinar la propación de incertidumbres y analizar cómo cambian las me
 
 ¿De qué otras formas se puede procesar las imágenes?
 
+----
 
-ER: He creado el branch Speckle-Edgar-uno y he modificado el Readme. Todo desde el Desktop.
+**ER: febrero 27,2025**
 
-ER: Está línea mientras Jose cambia en el main
+Se creó la clase PropsSpeckle.py \
+Se creó el archivo de prueba Prueba1.py \
+Se creó el archivo con la dirección a la carpeta de imágenes ruta.txt
 
+---
