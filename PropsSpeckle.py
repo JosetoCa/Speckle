@@ -5,6 +5,22 @@
 import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
+import sys
+import logging
+import os
+
+import sys
+
+# Configurar logging con salida a archivo y consola
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[
+        logging.FileHandler("bitacora.txt",mode='w'),  # Guardar en archivo
+        #logging.StreamHandler(sys.stdout)  # Imprimir en consola
+    ]
+)
+
 
 class PropsSpeckle:
 
@@ -17,15 +33,22 @@ class PropsSpeckle:
         # ruta.txt es el archivo en la carpeta Speckle que contiene la ruta de la carpeta
         # con imágenes 
         try:
-            with open(archivo, "r", encoding="utf-8") as f:
+
+            ruta_archivo = os.path.join(os.path.dirname(__file__), "ruta.txt")
+            with open(ruta_archivo, "r", encoding="utf-8") as f:
                 # Leer la primera línea y quitar espacios en blanco
                 self.primera_linea = f.readline().strip()  
+                self.primera_linea = os.path.join(os.path.dirname(__file__), self.primera_linea) #garantiza que la dirección esté completa
+                logging.info(f"Se crea una instancia de PropSpeckle en la ruta {ruta_archivo}")
         except FileNotFoundError:
-            print(f"Error: El archivo '{archivo}' no se encontró.")
+            print(f"Error: El archivo '{ruta_archivo}' no se encontró.")
             self.primera_linea = None
+            sys.exit()
         except Exception as e:
             print(f"Ocurrió un error al leer el archivo: {e}")
             self.primera_linea = None
+            sys.exit()
+
 
 
 ## Métodos de la clase PropsSpeckle ##
@@ -44,6 +67,8 @@ class PropsSpeckle:
             #Muestra la imagen
             if show:
                 imagen.show()  
+
+            logging.info(f"El nombre de la imagen de trabajo es: {imagen}")
         except FileNotFoundError:
             print(f"Error: La imagen '{ruta_imagen}' no se encontró.")
         except Exception as e:
@@ -51,11 +76,18 @@ class PropsSpeckle:
 
 
 # Cálculo de parámetros estadísticos
-    def statics(self):
+    def statistics(self):
+
         # Calcula la media, varianza y la desviación estándar de la imagen
         self.media = np.mean(self.spec)
         self.desviacion = np.std(self.spec)
         self.varianza = np.var(self.spec)
+
+        logging.info(f"Se ejecuta el método statistics")
+        logging.info(f"Valor promedio de la imagen = {self.media}")
+        logging.info(f"Valor desviación estándar de la imagen {self.desviacion}")
+        logging.info(f"Valor varianza de la imagen {self.varianza}")
+
 
 
 # Normalización de la imagen
