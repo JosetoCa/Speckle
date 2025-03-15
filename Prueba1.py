@@ -1,4 +1,5 @@
 import PropsSpeckle as ps
+
 import os
 
 print("Directorio actual:", os.getcwd())
@@ -11,7 +12,9 @@ print('Nombre:', espacio.name)
 print('Ruta',espacio.primera_linea)  # None
 
 espacio.imagen()
+
 espacio.statistics()
+
 print('Parámetros estadísticos de la imagen:')
 print('Media:', espacio.media)
 print('Desviación estándar:', espacio.desviacion)  

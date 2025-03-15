@@ -22,8 +22,6 @@ logging.basicConfig(
 )
 
 
-
-
 class PropsSpeckle:
 
     # Class attribute
@@ -35,6 +33,7 @@ class PropsSpeckle:
         # ruta.txt es el archivo en la carpeta Speckle que contiene la ruta de la carpeta
         # con imágenes 
         try:
+
             ruta_archivo = os.path.join(os.path.dirname(__file__), "ruta.txt")
             with open(ruta_archivo, "r", encoding="utf-8") as f:
                 # Leer la primera línea y quitar espacios en blanco
@@ -51,8 +50,8 @@ class PropsSpeckle:
             sys.exit()
 
 
-## Métodos de la clase PropsSpeckle ##
 
+## Métodos de la clase PropsSpeckle ##
 
 # Presentación en pantalla de la imagen
     def imagen(self, show=True):
@@ -68,6 +67,7 @@ class PropsSpeckle:
             #Muestra la imagen
             if show:
                 imagen.show()  
+
             logging.info(f"El nombre de la imagen de trabajo es: {imagen}")
         except FileNotFoundError:
             print(f"Error: La imagen '{ruta_imagen}' no se encontró.")
@@ -77,14 +77,17 @@ class PropsSpeckle:
 
 # Cálculo de parámetros estadísticos
     def statistics(self):
+
         # Calcula la media, varianza y la desviación estándar de la imagen
         self.media = np.mean(self.spec)
         self.desviacion = np.std(self.spec)
         self.varianza = np.var(self.spec)
+
         logging.info(f"Se ejecuta el método statistics")
         logging.info(f"Valor promedio de la imagen = {self.media}")
         logging.info(f"Valor desviación estándar de la imagen {self.desviacion}")
         logging.info(f"Valor varianza de la imagen {self.varianza}")
+
 
 
 # Normalización de la imagen
