@@ -61,9 +61,12 @@ class PropsSpeckle:
 ## Métodos de la clase PropsSpeckle ##
 
 # Presentación en pantalla de la imagen
-    def imagen(self, nombre:str, show=True):
+    def imagen(self, nombre:str=None, show=True):
         # Carga y muestra una imagen en escala de grises desde la ruta 
         # almacenada en el archivo de texto.
+        while not nombre:
+            nombre = input("Por favor, ingrese el nombre de la imagen con extensión: ").strip()
+        
         try:
             ruta_imagen = self.primera_linea + '\\' + nombre 
             #Imagen en escala de grises
@@ -101,12 +104,6 @@ class PropsSpeckle:
         print(f"Valor de la varianza es = {self.varianza}")
         print(f"Valor del contraste es = {self.constraste}")
 
-        plt.hist(self.spec.flatten(), bins=256, density=True)
-        plt.title('Histograma de la imagen')
-        plt.xlabel('Niveles de gris')
-        plt.ylabel('Frecuencia')
-        plt.show()
-
 
     def cal_media(self):
         # Calcula la media de la imagen
@@ -141,15 +138,7 @@ class PropsSpeckle:
         # Normaliza los  valores de intensidad de la imagen y actualiza
         # sus medeidas estadísticas.
         self.spec = self.spec / np.max(self.spec)
-        self.media = np.mean(self.spec)
-        self.desviacion = np.std(self.spec)
-        self.varianza = np.var(self.spec)
-        self.constraste = self.desviacion / self.media
         logging.info(f"Se ejecuta el método normalizar")
-        logging.info(f"Valor promedio de la imagen = {self.media}")
-        logging.info(f"Valor desviación estándar de la imagen {self.desviacion}")
-        logging.info(f"Valor varianza de la imagen {self.varianza}")
-        logging.info(f"Valor contraste de la imagen {self.constraste}")
         
 # Histograma de la imagen
     def histograma(self):
