@@ -23,6 +23,3 @@ espacio.statisticspro()
 #Grafica el histograma
 espacio.histograma()
 
-#Se llama otra imagen, sin dar el nombre de la imagen,se grafica histograma
-espacio.imagen(show=None)
-espacio.histograma()
