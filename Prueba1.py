@@ -11,9 +11,9 @@ print('Versión:', espacio.version)
 print('Nombre:', espacio.name)
 print('Ruta',espacio.primera_linea)  # None
 
-espacio.imagen()
+espacio.imagen('4-3.tif', show=True)
 
-espacio.statistics()
+espacio.statisticspro()
 
 print('Parámetros estadísticos de la imagen:')
 print('Media:', espacio.media)

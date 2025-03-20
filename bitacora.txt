@@ -1,0 +1,12 @@
+2025-03-15 17:39:43,441 - INFO - Se crea una instancia de PropSpeckle en la ruta c:\Proyectos\Speckle\ruta.txt
+2025-03-15 17:39:43,622 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=1280x1024 at 0x1D284EBE710>
+2025-03-15 17:39:43,642 - INFO - Se ejecuta el método statisticspro
+2025-03-15 17:39:43,643 - INFO - Valor promedio de la imagen = 25.138804626464843
+2025-03-15 17:39:43,643 - INFO - Valor desviación estándar de la imagen 18.701712861771465
+2025-03-15 17:39:43,643 - INFO - Valor varianza de la imagen 349.75406396414826
+2025-03-15 17:39:43,643 - INFO - Valor contraste de la imagen 0.7439380328404025
+2025-03-15 17:39:47,549 - INFO - Se ejecuta el método normalizar
+2025-03-15 17:39:47,550 - INFO - Valor promedio de la imagen = 0.11323785867776956
+2025-03-15 17:39:47,550 - INFO - Valor desviación estándar de la imagen 0.08424194982779946
+2025-03-15 17:39:47,550 - INFO - Valor varianza de la imagen 0.007096706110789481
+2025-03-15 17:39:47,550 - INFO - Valor contraste de la imagen 0.7439380328404032
