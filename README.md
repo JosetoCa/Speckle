@@ -9,10 +9,11 @@ Falta determinar la propación de incertidumbres y analizar cómo cambian las me
 
 ----
 
-**ER: febrero 27,2025**
+**TAREAS**
 
-Se creó la clase PropsSpeckle.py \
-Se creó el archivo de prueba Prueba1.py \
-Se creó el archivo con la dirección a la carpeta de imágenes ruta.txt
+1. Estimar la incertidumbre debida al ruido cuántico y del ambiente para responder con más confiabilidad si el patrón de Speckle está completamente desarrollado.
+
+2. Investigar como medir la coherencia espacial de un patrón de Speckle
+
 
 ---
