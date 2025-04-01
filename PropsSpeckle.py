@@ -54,6 +54,7 @@ class PropsSpeckle:
         self.desviacion = None
         self.varianza = None
         self.constraste = None
+        self.shape = None
 
 
 
@@ -74,6 +75,9 @@ class PropsSpeckle:
             # Con self.spec se guarda la imagen en un arreglo de numpy para procesarla
             self.spec = np.array(imagen)
             #Muestra la imagen
+            self.shape = self.spec.shape
+            logging.info(f"Se ejecuta el método imagen, leyendo la imagen {nombre}")
+            logging.info(f"El tamaño de la imagen es: {self.shape}")
             if show:
                 imagen.show()  
 
@@ -143,8 +147,40 @@ class PropsSpeckle:
 # Histograma de la imagen
     def histograma(self):
         # Genera un histograma de la imagen
-        plt.hist(self.spec.flatten(), bins=256, density=True)
+        plt.hist(self.spec.flatten(), bins=25, density=True)
         plt.title('Histograma de la imagen')
         plt.xlabel('Niveles de gris')
         plt.ylabel('Frecuencia')
         plt.show()
+# Estadísticas de segundo orden
+    def autocorrelacion(self, show=True, dim = 1):
+        # Calcula la autocorrelación de la imagen
+        f = np.fft.fft2(self.spec)  # Transformada de Fourier
+        f_conj = np.conj(f)     # Conjugado complejo
+        acorr = np.fft.ifft2(f * f_conj)  # Autocorrelación inversa
+        acorr = np.fft.fftshift(acorr)  # Centrar la autocorrelación
+        H, W = self.shape
+        pixel_size = 5.2  # µm por píxel
+        x = np.linspace(-W//2, W//2, W) * pixel_size  # En micrómetros
+        y = np.linspace(-H//2, H//2, H) * pixel_size  # En micrómetros
+
+        if show:
+            if dim == 1:
+                # Mostrar la autocorrelación en una dimensión
+                y = acorr[H//2,:]
+                plt.plot(x, y)
+                plt.title('Autocorrelación')
+                plt.xlabel('Desplazamiento')
+                plt.ylabel('Autocorrelación')
+                plt.show()
+            elif dim == 2:
+                # Mostrar la autocorrelación en dos dimensiones
+                plt.imshow(np.abs(acorr), extent=[x.min(), x.max(), y.min(), y.max()], cmap='gray')
+                plt.title('Autocorrelación')
+                plt.xlabel("Desplazamiento en x (µm)")
+                plt.ylabel("Desplazamiento en y (µm)")
+                plt.title("Autocorrelación en unidades de longitud")
+                plt.colorbar()
+                plt.show()
+        logging.info(f"Se ejecuta el método autocorrelacion")
+        return acorr
