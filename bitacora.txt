@@ -1,14 +1,15 @@
-2025-03-31 21:41:11,884 - INFO - Se crea una instancia de PropSpeckle en la ruta c:\Proyectos\Speckle\ruta.txt
-2025-03-31 21:41:11,982 - INFO - Se ejecuta el método imagen, leyendo la imagen 4-3.tif
-2025-03-31 21:41:11,982 - INFO - El tamaño de la imagen es: (1024, 1280)
-2025-03-31 21:41:12,044 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=1280x1024 at 0x2652C6925D0>
-2025-03-31 21:41:12,065 - INFO - Se ejecuta el método statisticspro
-2025-03-31 21:41:12,065 - INFO - Valor promedio de la imagen = 25.138804626464843
-2025-03-31 21:41:12,065 - INFO - Valor desviación estándar de la imagen 18.701712861771465
-2025-03-31 21:41:12,065 - INFO - Valor varianza de la imagen 349.75406396414826
-2025-03-31 21:41:12,065 - INFO - Valor contraste de la imagen 0.7439380328404025
-2025-03-31 21:41:12,086 - INFO - Se ejecuta el método statisticspro
-2025-03-31 21:41:12,086 - INFO - Valor promedio de la imagen = 25.138804626464843
-2025-03-31 21:41:12,086 - INFO - Valor desviación estándar de la imagen 18.701712861771465
-2025-03-31 21:41:12,086 - INFO - Valor varianza de la imagen 349.75406396414826
-2025-03-31 21:41:12,086 - INFO - Valor contraste de la imagen 0.7439380328404025
+2025-04-01 15:33:40,707 - INFO - Se crea una instancia de PropSpeckle en la ruta c:\Proyectos\Speckle\ruta.txt
+2025-04-01 15:33:40,769 - INFO - Se ejecuta el método imagen, leyendo la imagen 4-3.tif
+2025-04-01 15:33:40,769 - INFO - El tamaño de la imagen es: (1024, 1280)
+2025-04-01 15:33:40,818 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=1280x1024 at 0x1B9E27625D0>
+2025-04-01 15:33:40,837 - INFO - Se ejecuta el método statisticspro
+2025-04-01 15:33:40,837 - INFO - Valor promedio de la imagen = 25.138804626464843
+2025-04-01 15:33:40,837 - INFO - Valor desviación estándar de la imagen 18.701712861771465
+2025-04-01 15:33:40,837 - INFO - Valor varianza de la imagen 349.75406396414826
+2025-04-01 15:33:40,837 - INFO - Valor contraste de la imagen 0.7439380328404025
+2025-04-01 15:33:40,858 - INFO - Se ejecuta el método statisticspro
+2025-04-01 15:33:40,858 - INFO - Valor promedio de la imagen = 25.138804626464843
+2025-04-01 15:33:40,858 - INFO - Valor desviación estándar de la imagen 18.701712861771465
+2025-04-01 15:33:40,858 - INFO - Valor varianza de la imagen 349.75406396414826
+2025-04-01 15:33:40,858 - INFO - Valor contraste de la imagen 0.7439380328404025
+2025-04-01 15:34:00,503 - INFO - Se ejecuta el método autocorrelacion

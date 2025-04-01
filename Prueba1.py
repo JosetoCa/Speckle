@@ -22,5 +22,6 @@ espacio.statisticspro()
 espacio.statisticspro()
 #Grafica el histograma
 espacio.histograma()
+espacio.autocorrelacion()
 
 
