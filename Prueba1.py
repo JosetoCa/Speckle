@@ -1,5 +1,6 @@
 import PropsSpeckle as ps
-
+import numpy as np
+import matplotlib.pyplot as plt
 import os
 
 ## Para verificar el directorio de trabajo, donde se guarda bitaora.txt
@@ -16,10 +17,11 @@ print('Ruta',espacio.primera_linea)  # None
 espacio.imagen('4-3.tif',show=True)
 # Información de estadística primer orden
 espacio.statisticspro()
-# Se normaliza la imagen
-espacio.normalizar()
+
 #Se vuelven a determinar los parámetros estadísticos de primer orden
 espacio.statisticspro()
 #Grafica el histograma
 espacio.histograma()
+espacio.autocorrelacion()
+
 
