@@ -5,6 +5,7 @@
 import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
+from scipy.stats import expon
 import sys
 import logging
 import os
@@ -55,6 +56,11 @@ class PropsSpeckle:
         self.varianza = None
         self.constraste = None
         self.shape = None
+        self.imagef = None
+        self.mediaf = None
+        self.desviacionf = None
+        self.varianzaf = None
+        self.constrastef = None
 
 
 
@@ -154,6 +160,8 @@ class PropsSpeckle:
         plt.show()
 # Estadísticas de segundo orden
     def autocorrelacion(self, show=True, dim = 1, pixel_size=5.2):
+        if self.spec is None:
+            raise ValueError("La imagen no ha sido cargada. Por favor, carga una imagen primero.")
         # Calcula la autocorrelación de la imagen
         # Pixel_size es el tamaño del píxel en micrómetros.
         # Dim es la dimensión de la autocorrelación (1 o 2)
@@ -187,3 +195,89 @@ class PropsSpeckle:
                 plt.show()
         logging.info(f"Se ejecuta el método autocorrelacion")
         return acorr
+    def modificar(self):
+        #Modifica la imagen de forma conveniente para analilzar la densidad de probabilidad de la muesstra tomada.
+        if self.spec is None:
+            raise ValueError("La imagen no ha sido cargada. Por favor, carga una imagen primero.")
+        # Obtener el valor más frecuente (moda)
+        valores, cuentas = np.unique(self.spec, return_counts=True)
+        moda = valores[np.argmax(cuentas)]
+        mascara = self.spec >= moda
+        # Crear imagen filtrada con NaNs por defecto (tipo float64)
+        self.imagef = np.full(self.shape, np.nan, dtype=np.float64)
+        self.imagef[mascara] = self.spec[mascara] - moda
+        self.mediaf = np.nanmean(self.imagef)
+        self.desviacionf = np.nanstd(self.spec)
+        self.varianzaf = np.nanvar(self.spec)
+        self.constrastef = self.desviacionf / self.mediaf
+
+        valores_validos = self.imagef[~np.isnan(self.imagef)].flatten()
+        # Crear histograma normalizado (como una densidad de probabilidad)
+        conteo, bins, _= plt.hist(valores_validos, bins=256, density=True, alpha=0.5, color='gray', label='Datos')
+
+        # Eje x para la función teórica
+        x = np.linspace(0, np.max(valores_validos), 1000)
+
+        # Distribución exponencial teórica
+        pdf_expon = expon(scale=self.mediaf).pdf(x)
+
+        # Graficar ambas
+        plt.plot(x, pdf_expon, 'r-', label='Distribución exponencial teórica')
+        plt.title('Comparación con distribución de speckle completamente polarizado')
+        plt.xlabel('Intensidad (ajustada)')
+        plt.ylabel('Densidad de probabilidad')
+        plt.legend()
+        plt.grid(True)
+        plt.show()
+    def autocorrelacionf(self, show=True, dim = 1, pixel_size=5.2):
+        # Calcula la autocorrelación de la imagen filtrada
+        # Pixel_size es el tamaño del píxel en micrómetros.
+        # Dim es la dimensión de la autocorrelación (1 o 2)
+        # show indica si se debe mostrar la autocorrelación o no.
+        if self.spec is None:
+            raise ValueError("La imagen no ha sido cargada. Por favor, carga una imagen primero.")
+        imagen_temp = np.nan_to_num(self.imagef, nan=0.0)
+        mask = ~np.isnan(self.imagef)
+        mask = mask.astype(float)
+
+        # FFT de la imagen y la máscara
+        fft_img = np.fft.fft2(imagen_temp)
+        fft_mask = np.fft.fft2(mask)
+
+        # Autocorrelación de la imagen y de la máscara
+        autocorr_img = np.fft.fftshift(np.real(np.fft.ifft2(fft_img * np.conj(fft_img))))
+        autocorr_mask = np.fft.fftshift(np.real(np.fft.ifft2(fft_mask * np.conj(fft_mask))))
+
+        # Normalizar (evitar división por cero)
+        autocorr_norm = np.divide(
+            autocorr_img,
+            autocorr_mask,
+            out=np.zeros_like(autocorr_img),
+            where=autocorr_mask > 0
+        )
+
+        # Mostrar
+        H, W = self.shape  # Dimensiones de la imagen
+        x = np.linspace(-W//2, W//2, W) * pixel_size  # En micrómetros
+        y = np.linspace(-H//2, H//2, H) * pixel_size  # En micrómetros
+
+        if show:
+            if dim == 1:
+                # Mostrar la autocorrelación en una dimensión
+                y = autocorr_norm[H//2,:]
+                plt.plot(x, y, c='black')
+                plt.scatter(x, y, s=8, c='red')
+                plt.title('Autocorrelación')
+                plt.xlabel('Desplazamiento en x (µm)')
+                plt.ylabel('Autocorrelación')
+                plt.show()
+            elif dim == 2:
+                # Mostrar la autocorrelación en dos dimensiones
+                plt.imshow(np.abs(autocorr_norm), extent=[x.min(), x.max(), y.min(), y.max()], cmap='gray')
+                plt.title('Autocorrelación')
+                plt.xlabel("Desplazamiento en x (µm)")
+                plt.ylabel("Desplazamiento en y (µm)")
+                plt.title("Autocorrelación en unidades de longitud")
+                plt.colorbar()
+                plt.show()
+        return autocorr_norm

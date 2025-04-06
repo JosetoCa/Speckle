@@ -1,15 +1,20 @@
-2025-04-01 15:33:40,707 - INFO - Se crea una instancia de PropSpeckle en la ruta c:\Proyectos\Speckle\ruta.txt
-2025-04-01 15:33:40,769 - INFO - Se ejecuta el método imagen, leyendo la imagen 4-3.tif
-2025-04-01 15:33:40,769 - INFO - El tamaño de la imagen es: (1024, 1280)
-2025-04-01 15:33:40,818 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=1280x1024 at 0x1B9E27625D0>
-2025-04-01 15:33:40,837 - INFO - Se ejecuta el método statisticspro
-2025-04-01 15:33:40,837 - INFO - Valor promedio de la imagen = 25.138804626464843
-2025-04-01 15:33:40,837 - INFO - Valor desviación estándar de la imagen 18.701712861771465
-2025-04-01 15:33:40,837 - INFO - Valor varianza de la imagen 349.75406396414826
-2025-04-01 15:33:40,837 - INFO - Valor contraste de la imagen 0.7439380328404025
-2025-04-01 15:33:40,858 - INFO - Se ejecuta el método statisticspro
-2025-04-01 15:33:40,858 - INFO - Valor promedio de la imagen = 25.138804626464843
-2025-04-01 15:33:40,858 - INFO - Valor desviación estándar de la imagen 18.701712861771465
-2025-04-01 15:33:40,858 - INFO - Valor varianza de la imagen 349.75406396414826
-2025-04-01 15:33:40,858 - INFO - Valor contraste de la imagen 0.7439380328404025
-2025-04-01 15:34:00,503 - INFO - Se ejecuta el método autocorrelacion
+2025-04-06 14:36:46,570 - INFO - Se crea una instancia de PropSpeckle en la ruta c:\Proyectos\Speckle\ruta.txt
+2025-04-06 14:36:46,629 - INFO - Se ejecuta el método imagen, leyendo la imagen 3-16.tif
+2025-04-06 14:36:46,630 - INFO - El tamaño de la imagen es: (1024, 1280)
+2025-04-06 14:36:46,630 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=1280x1024 at 0x287D9756350>
+2025-04-06 14:36:46,644 - INFO - Se ejecuta el método statisticspro
+2025-04-06 14:36:46,644 - INFO - Valor promedio de la imagen = 16.422447204589844
+2025-04-06 14:36:46,644 - INFO - Valor desviación estándar de la imagen 13.959671538851316
+2025-04-06 14:36:46,644 - INFO - Valor varianza de la imagen 194.87242947261547
+2025-04-06 14:36:46,644 - INFO - Valor contraste de la imagen 0.8500360125956005
+2025-04-06 14:36:46,775 - INFO - Se ejecuta el método autocorrelacion
+2025-04-06 14:36:46,778 - INFO - Se crea una instancia de PropSpeckle en la ruta c:\Proyectos\Speckle\ruta.txt
+2025-04-06 14:36:46,798 - INFO - Se ejecuta el método imagen, leyendo la imagen 4-150.tif
+2025-04-06 14:36:46,798 - INFO - El tamaño de la imagen es: (1024, 1280)
+2025-04-06 14:36:46,798 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=1280x1024 at 0x287D9742060>
+2025-04-06 14:36:46,813 - INFO - Se ejecuta el método statisticspro
+2025-04-06 14:36:46,813 - INFO - Valor promedio de la imagen = 20.46995849609375
+2025-04-06 14:36:46,813 - INFO - Valor desviación estándar de la imagen 17.802322190908193
+2025-04-06 14:36:46,813 - INFO - Valor varianza de la imagen 316.9226753889023
+2025-04-06 14:36:46,813 - INFO - Valor contraste de la imagen 0.8696804243303855
+2025-04-06 14:36:46,941 - INFO - Se ejecuta el método autocorrelacion
