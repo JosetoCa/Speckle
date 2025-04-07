@@ -196,21 +196,33 @@ class PropsSpeckle:
         logging.info(f"Se ejecuta el método autocorrelacion")
         return acorr
     def modificar(self):
-        #Modifica la imagen de forma conveniente para analilzar la densidad de probabilidad de la muesstra tomada.
+        # Modifica la imagen de forma 
+        # conveniente para analilzar la densidad de probabilidad de la muestra tomada.
+        # Se ubica la moda como el nuevo valor de referencia y se resta a la imagen original.
         if self.spec is None:
             raise ValueError("La imagen no ha sido cargada. Por favor, carga una imagen primero.")
         # Obtener el valor más frecuente (moda)
         valores, cuentas = np.unique(self.spec, return_counts=True)
         moda = valores[np.argmax(cuentas)]
+        # Crear una máscara booleana para los valores mayores o iguales a la moda
         mascara = self.spec >= moda
+        
         # Crear imagen filtrada con NaNs por defecto (tipo float64)
+
+        #Crea un array de NAN con la misma forma que la imagen original
         self.imagef = np.full(self.shape, np.nan, dtype=np.float64)
+        # Asigna los valores de la imagen original restando la moda a la imagen filtrada 
+        # donde la máscara es True, donde es False se queda como NaN
         self.imagef[mascara] = self.spec[mascara] - moda
+
+        # Actualiza las estadísticas de primer orden de la imagen filtrada
         self.mediaf = np.nanmean(self.imagef)
         self.desviacionf = np.nanstd(self.spec)
         self.varianzaf = np.nanvar(self.spec)
         self.constrastef = self.desviacionf / self.mediaf
 
+
+        #crea un array de valores distintos a NaN para graficar el histograma
         valores_validos = self.imagef[~np.isnan(self.imagef)].flatten()
         # Crear histograma normalizado (como una densidad de probabilidad)
         conteo, bins, _= plt.hist(valores_validos, bins=256, density=True, alpha=0.5, color='gray', label='Datos')
@@ -221,7 +233,7 @@ class PropsSpeckle:
         # Distribución exponencial teórica
         pdf_expon = expon(scale=self.mediaf).pdf(x)
 
-        # Graficar ambas
+        # Grafica de ambas
         plt.plot(x, pdf_expon, 'r-', label='Distribución exponencial teórica')
         plt.title('Comparación con distribución de speckle completamente polarizado')
         plt.xlabel('Intensidad (ajustada)')
@@ -234,9 +246,17 @@ class PropsSpeckle:
         # Pixel_size es el tamaño del píxel en micrómetros.
         # Dim es la dimensión de la autocorrelación (1 o 2)
         # show indica si se debe mostrar la autocorrelación o no.
-        if self.spec is None:
-            raise ValueError("La imagen no ha sido cargada. Por favor, carga una imagen primero.")
+        if self.spec is None or self.imagef is None:
+            # Verifica si la imagen original o la imagen filtrada no han sido cargadas
+            raise ValueError("La imagen no ha sido cargada o modificada. Por favor, carga una imagen primero.")
+        # Los valores NaN se reemplazan por 0.0 para evitar problemas en la FFT
+        # Pero se crea una máscara para no perder la información de la imagen original
+        # La idea Luego dividir las autocorrelaciones para quitar el efecto de la máscara de 0s
+        
+        # Se cambian Nans por 0.0 para evitar problemas en la FFT
         imagen_temp = np.nan_to_num(self.imagef, nan=0.0)
+        # Se crea una máscara para los valores originales
+        # La máscara es 1 donde la imagen original no es NaN y 0 donde sí lo es
         mask = ~np.isnan(self.imagef)
         mask = mask.astype(float)
 
@@ -248,7 +268,7 @@ class PropsSpeckle:
         autocorr_img = np.fft.fftshift(np.real(np.fft.ifft2(fft_img * np.conj(fft_img))))
         autocorr_mask = np.fft.fftshift(np.real(np.fft.ifft2(fft_mask * np.conj(fft_mask))))
 
-        # Normalizar (evitar división por cero)
+        # Normalizar (evitando división por cero)
         autocorr_norm = np.divide(
             autocorr_img,
             autocorr_mask,
@@ -257,11 +277,11 @@ class PropsSpeckle:
         )
 
         # Mostrar
-        H, W = self.shape  # Dimensiones de la imagen
-        x = np.linspace(-W//2, W//2, W) * pixel_size  # En micrómetros
-        y = np.linspace(-H//2, H//2, H) * pixel_size  # En micrómetros
-
+        
         if show:
+            H, W = self.shape  # Dimensiones de la imagen
+            x = np.linspace(-W//2, W//2, W) * pixel_size  # En micrómetros
+            y = np.linspace(-H//2, H//2, H) * pixel_size  # En micrómetros
             if dim == 1:
                 # Mostrar la autocorrelación en una dimensión
                 y = autocorr_norm[H//2,:]
