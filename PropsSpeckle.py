@@ -9,6 +9,7 @@ from scipy.stats import expon
 import sys
 import logging
 import os
+from scipy.stats import linregress, t as t_dist
 
 import sys
 
@@ -301,3 +302,89 @@ class PropsSpeckle:
                 plt.colorbar()
                 plt.show()
         return autocorr_norm
+    def prueba(self):
+        # Método para verificar que los datos son de un speckle completamente desarrollado, polarizado.
+        if self.imagef is None:
+            raise ValueError("La imagen no ha sido modificada. Por favor, modifica la imagen primero.")
+        y, x = np.histogram(self.imagef[~np.isnan(self.imagef)].flatten(), bins=256, range=None, density=True, weights=None)
+        x = x[:-1]  # Calcular los centros de los bins
+        N = len(self.imagef[~np.isnan(self.imagef)].flatten()) #Numero de datos
+        p_x = y # Densidad de probabilidad de X
+        mask = p_x != 0 # Esta mascara nos permite quedarnos únicamente con los datos para los que poseemos información
+        X_0 = np.copy(x)[mask]
+        Y_0 = np.log(p_x[mask])
+        
+        
+        Y = np.log(p_x) #Variable lineal
+
+       
+
+        
+        plt.scatter(x,Y)
+        plt.title('Diagrama de dispersión de los datos')
+        plt.xlabel('Intensidad del pixel')
+        plt.ylabel('Log(Probabilidad)')
+
+        plt.show()
+
+        #Estadigrafos de nuestra regresión
+
+        b = (sum(X_0*Y_0)-len(X_0)*Y_0.mean()*X_0.mean())/(sum(X_0**2)-len(X_0)*X_0.mean()**2)
+        a = Y_0.mean()-b*X_0.mean()
+
+        plt.scatter(X_0,Y_0, label = 'dispersión', s=5)
+        plt.plot(X_0,a+b*X_0, color = 'red', label = 'regresión')
+
+        plt.title('Diagrama de dispersión de los datos')
+        plt.xlabel('Intensidad del pixel')
+        plt.ylabel('Log(Probabilidad)')
+        plt.legend()
+        plt.show()
+        media_I = np.mean(X_0)
+        media_LogP = np.mean(Y_0)
+        Var_X = np.sum((X_0 - media_I)**2)/(len(X_0)-1)
+        Var_Y = np.sum((Y_0 - media_LogP)**2)/(len(X_0)-1)
+        s_X = np.sqrt(Var_X)
+
+
+        
+        S_YX =  np.sqrt((len(X_0)-1)/(len(X_0)-2) * (Var_Y - b**2 * Var_X))
+        
+
+
+        t = (b+1/self.mediaf)/(S_YX/(s_X*np.sqrt(len(X_0)-1)))
+        
+        print(f"t estadístico: {t}")
+
+        # Hacemos la regresión lineal
+        slope, intercept, r_value, p_value, std_err = linregress(X_0, Y_0)
+
+        # Mostramos resultados de la regresión
+        print(f"Pendiente (b): {slope}")
+        print(f"Intercepto (a): {intercept}")
+        print(f"Error estándar de la pendiente: {std_err}")
+        print(f"Valor p (para H0: pendiente = 0): {p_value}")
+        print(f"Coeficiente de correlación r: {r_value}")
+
+        # Valor teórico de la pendiente si fuera exponencial
+        mu = self.mediaf
+        b0 = -1 / mu
+        print(f"Valor teórico de la pendiente: {b0}")
+        print(f"Valor de la pendiente: {slope}")
+
+        # Estadístico t para probar H0: b == b0
+        t = (slope - b0) / std_err
+        gl = len(X_0) - 2
+
+        # Intervalo de aceptación al 90%
+        intervalo = t_dist.interval(0.90, df=gl, loc=0, scale=1)
+
+        print(f"Valor del estadístico t: {t}")
+        print(f"Intervalo de aceptación (al 90%): {intervalo}")
+
+        # Conclusión
+        if t < intervalo[0] or t > intervalo[1]:
+            print("Rechazamos H₀: la pendiente difiere de -1/μ")
+        else:
+            print("No se puede rechazar H₀: la pendiente podría ser -1/μ")
+
