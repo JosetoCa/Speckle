@@ -17,7 +17,7 @@ Falta determinar la propación de incertidumbres y analizar cómo cambian las me
 
 3. Montar pruebas de hipótesis para verificar si los datos pueden ser los de un speckle completamente desarrollado polarizado.
 
-4. Hacer simulaciones con distribuciones distintas a las de la exponencial negativa (speckle F.D. polarizado) para verificar si la prueba de hipótesis, con el método "modificar", es capaz de determinar que no se sigue una exponencial negativa. En particular hacer simulaciones con speckle F.D. no polarizado.
+4. Hacer simulaciones con distribuciones distintas a las de la exponencial negativa (speckle F.D. polarizado) para verificar si la prueba de hipótesis, con el método "modificar", es capaz de determinar que no se sigue una exponencial negativa. En particular hacer simulaciones con speckle F.D. no polarizado. (Jose)
 
-5. Pensar en algún método para caracterizar la superficie del difusor.
+5. Pensar en algún método para caracterizar la superficie del difusor. (Edgar)
 ---
