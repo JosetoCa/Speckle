@@ -1,20 +1,4 @@
-2025-04-07 10:50:25,669 - INFO - Se crea una instancia de PropSpeckle en la ruta c:\Proyectos\Speckle\ruta.txt
-2025-04-07 10:50:25,753 - INFO - Se ejecuta el método imagen, leyendo la imagen 3-16.tif
-2025-04-07 10:50:25,754 - INFO - El tamaño de la imagen es: (1024, 1280)
-2025-04-07 10:50:25,754 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=1280x1024 at 0x26D70A72350>
-2025-04-07 10:50:25,769 - INFO - Se ejecuta el método statisticspro
-2025-04-07 10:50:25,769 - INFO - Valor promedio de la imagen = 16.422447204589844
-2025-04-07 10:50:25,769 - INFO - Valor desviación estándar de la imagen 13.959671538851316
-2025-04-07 10:50:25,769 - INFO - Valor varianza de la imagen 194.87242947261547
-2025-04-07 10:50:25,769 - INFO - Valor contraste de la imagen 0.8500360125956005
-2025-04-07 10:50:25,919 - INFO - Se ejecuta el método autocorrelacion
-2025-04-07 10:50:25,922 - INFO - Se crea una instancia de PropSpeckle en la ruta c:\Proyectos\Speckle\ruta.txt
-2025-04-07 10:50:25,950 - INFO - Se ejecuta el método imagen, leyendo la imagen 4-150.tif
-2025-04-07 10:50:25,950 - INFO - El tamaño de la imagen es: (1024, 1280)
-2025-04-07 10:50:25,951 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=1280x1024 at 0x26D70A62060>
-2025-04-07 10:50:25,970 - INFO - Se ejecuta el método statisticspro
-2025-04-07 10:50:25,970 - INFO - Valor promedio de la imagen = 20.46995849609375
-2025-04-07 10:50:25,970 - INFO - Valor desviación estándar de la imagen 17.802322190908193
-2025-04-07 10:50:25,970 - INFO - Valor varianza de la imagen 316.9226753889023
-2025-04-07 10:50:25,970 - INFO - Valor contraste de la imagen 0.8696804243303855
-2025-04-07 10:50:26,122 - INFO - Se ejecuta el método autocorrelacion
+2025-04-23 13:49:43,130 - INFO - Se crea una instancia de PropSpeckle en la ruta c:\Users\usuario\Documents\GitHub\Speckle\ruta.txt
+2025-04-23 13:49:43,249 - INFO - Se ejecuta el método imagen, leyendo la imagen 0-3.tif
+2025-04-23 13:49:43,249 - INFO - El tamaño de la imagen es: (1024, 1280)
+2025-04-23 13:49:44,275 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=1280x1024 at 0x1AD54B8CFD0>
