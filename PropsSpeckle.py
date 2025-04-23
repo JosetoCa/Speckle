@@ -5,11 +5,11 @@
 import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
-from scipy.stats import expon
+from scipy.stats import expon, linregress, chisquare, t as t_dist
 import sys
 import logging
 import os
-from scipy.stats import linregress, t as t_dist
+import pandas as pd
 
 import sys
 
@@ -68,98 +68,7 @@ class PropsSpeckle:
 
 ## Métodos de la clase PropsSpeckle ##
 
-# Presentación en pantalla de la imagen
-    def imagen(self, nombre:str=None, show=True):
-        # Carga y muestra una imagen en escala de grises desde la ruta 
-        # almacenada en el archivo de texto.
-        while not nombre:
-            nombre = input("Por favor, ingrese el nombre de la imagen con extensión: ").strip()
-        
-        try:
-            ruta_imagen = self.primera_linea + '\\' + nombre 
-            #Imagen en escala de grises
-            imagen = Image.open(ruta_imagen).convert('L') 
-            # Con self.spec se guarda la imagen en un arreglo de numpy para procesarla
-            self.spec = np.array(imagen)
-            #Muestra la imagen
-            self.shape = self.spec.shape
-            logging.info(f"Se ejecuta el método imagen, leyendo la imagen {nombre}")
-            logging.info(f"El tamaño de la imagen es: {self.shape}")
-            if show:
-                imagen.show()  
-
-            logging.info(f"El nombre de la imagen de trabajo es: {imagen}")
-        except FileNotFoundError:
-            print(f"Error: La imagen '{ruta_imagen}' no se encontró.")
-        except Exception as e:
-            print(f"Ocurrió un error al abrir la imagen: {e}")
-
-
-# Cálculo de parámetros estadísticos
-    def statisticspro(self):
-
-        # Calcula la media, varianza y la desviación estándar de la imagen
-        self.media = np.mean(self.spec)
-        self.desviacion = np.std(self.spec)
-        self.varianza = np.var(self.spec)
-        self.constraste = self.desviacion / self.media
-
-        logging.info(f"Se ejecuta el método statisticspro")
-        logging.info(f"Valor promedio de la imagen = {self.media}")
-        logging.info(f"Valor desviación estándar de la imagen {self.desviacion}")
-        logging.info(f"Valor varianza de la imagen {self.varianza}")
-        logging.info(f"Valor contraste de la imagen {self.constraste}")
-
-        print(f"Valor de la intensidad media es = {self.media}")
-        print(f"Valor de la desviación estándar es = {self.desviacion}")
-        print(f"Valor de la varianza es = {self.varianza}")
-        print(f"Valor del contraste es = {self.constraste}")
-
-
-    def cal_media(self):
-        # Calcula la media de la imagen
-        self.media = np.mean(self.spec)
-        logging.info(f"Se ejecuta el método cal_media")
-        logging.info(f"Valor promedio de la imagen = {self.media}")
-        return self.media
-    
-    def cal_desviacion(self):
-        # Calcula la desviación estándar de la imagen
-        self.desviacion = np.std(self.spec)
-        logging.info(f"Se ejecuta el método cal_desviacion")
-        logging.info(f"Valor desviación estándar de la imagen {self.desviacion}")
-        return self.desviacion
-    
-    def cal_varianza(self):
-        # Calcula la varianza de la imagen
-        self.varianza = np.var(self.spec)
-        logging.info(f"Se ejecuta el método cal_varianza")
-        logging.info(f"Valor varianza de la imagen {self.varianza}")
-        return self.varianza
-    
-    def cal_contraste(self):
-        # Calcula el contraste de la imagen
-        self.constraste = self.desviacion / self.media
-        logging.info(f"Se ejecuta el método cal_contraste")
-        logging.info(f"Valor contraste de la imagen {self.constraste}")
-        return self.constraste
-
-# Normalización de la imagen
-    def normalizar(self):
-        # Normaliza los  valores de intensidad de la imagen y actualiza
-        # sus medeidas estadísticas.
-        self.spec = self.spec / np.max(self.spec)
-        logging.info(f"Se ejecuta el método normalizar")
-        
-# Histograma de la imagen
-    def histograma(self):
-        # Genera un histograma de la imagen
-        plt.hist(self.spec.flatten(), bins=256, density=True)
-        plt.title('Histograma de la imagen')
-        plt.xlabel('Niveles de gris')
-        plt.ylabel('Frecuencia')
-        plt.show()
-# Estadísticas de segundo orden
+### Estadísticas de segundo orden ###
     def autocorrelacion(self, show=True, dim = 1, pixel_size=5.2):
         if self.spec is None:
             raise ValueError("La imagen no ha sido cargada. Por favor, carga una imagen primero.")
@@ -196,52 +105,8 @@ class PropsSpeckle:
                 plt.show()
         logging.info(f"Se ejecuta el método autocorrelacion")
         return acorr
-    def modificar(self):
-        # Modifica la imagen de forma 
-        # conveniente para analilzar la densidad de probabilidad de la muestra tomada.
-        # Se ubica la moda como el nuevo valor de referencia y se resta a la imagen original.
-        if self.spec is None:
-            raise ValueError("La imagen no ha sido cargada. Por favor, carga una imagen primero.")
-        # Obtener el valor más frecuente (moda)
-        valores, cuentas = np.unique(self.spec, return_counts=True)
-        moda = valores[np.argmax(cuentas)]
-        # Crear una máscara booleana para los valores mayores o iguales a la moda
-        mascara = self.spec >= moda
-        
-        # Crear imagen filtrada con NaNs por defecto (tipo float64)
-
-        #Crea un array de NAN con la misma forma que la imagen original
-        self.imagef = np.full(self.shape, np.nan, dtype=np.float64)
-        # Asigna los valores de la imagen original restando la moda a la imagen filtrada 
-        # donde la máscara es True, donde es False se queda como NaN
-        self.imagef[mascara] = self.spec[mascara] - moda
-
-        # Actualiza las estadísticas de primer orden de la imagen filtrada
-        self.mediaf = np.nanmean(self.imagef)
-        self.desviacionf = np.nanstd(self.spec)
-        self.varianzaf = np.nanvar(self.spec)
-        self.constrastef = self.desviacionf / self.mediaf
-
-
-        #crea un array de valores distintos a NaN para graficar el histograma
-        valores_validos = self.imagef[~np.isnan(self.imagef)].flatten()
-        # Crear histograma normalizado (como una densidad de probabilidad)
-        conteo, bins, _= plt.hist(valores_validos, bins=256, density=True, alpha=0.5, color='gray', label='Datos')
-
-        # Eje x para la función teórica
-        x = np.linspace(0, np.max(valores_validos), 1000)
-
-        # Distribución exponencial teórica
-        pdf_expon = expon(scale=self.mediaf).pdf(x)
-
-        # Grafica de ambas
-        plt.plot(x, pdf_expon, 'r-', label='Distribución exponencial teórica')
-        plt.title('Comparación con distribución de speckle completamente polarizado')
-        plt.xlabel('Intensidad (ajustada)')
-        plt.ylabel('Densidad de probabilidad')
-        plt.legend()
-        plt.grid(True)
-        plt.show()
+    
+    ###   ###
     def autocorrelacionf(self, show=True, dim = 1, pixel_size=5.2):
         # Calcula la autocorrelación de la imagen filtrada
         # Pixel_size es el tamaño del píxel en micrómetros.
@@ -302,6 +167,138 @@ class PropsSpeckle:
                 plt.colorbar()
                 plt.show()
         return autocorr_norm
+
+
+    ###    ###
+    def cal_contraste(self):
+        # Calcula el contraste de la imagen
+        self.constraste = self.desviacion / self.media
+        logging.info(f"Se ejecuta el método cal_contraste")
+        logging.info(f"Valor contraste de la imagen {self.constraste}")
+        return self.constraste
+    
+    
+    ###   ###
+    def cal_desviacion(self):
+        # Calcula la desviación estándar de la imagen
+        self.desviacion = np.std(self.spec)
+        logging.info(f"Se ejecuta el método cal_desviacion")
+        logging.info(f"Valor desviación estándar de la imagen {self.desviacion}")
+        return self.desviacion
+    
+    
+    #### Calcula la media de la imagen ###
+    def cal_media(self):
+        # Calcula la media de la imagen
+        self.media = np.mean(self.spec)
+        logging.info(f"Se ejecuta el método cal_media")
+        logging.info(f"Valor promedio de la imagen = {self.media}")
+        return self.media
+    
+    
+    ###    ###    
+    def cal_varianza(self):
+        # Calcula la varianza de la imagen
+        self.varianza = np.var(self.spec)
+        logging.info(f"Se ejecuta el método cal_varianza")
+        logging.info(f"Valor varianza de la imagen {self.varianza}")
+        return self.varianza
+
+
+    #### Histograma de la imagen ###
+    def histograma(self):
+        # Genera un histograma de la imagen
+        plt.hist(self.spec.flatten(), bins=256, density=True)
+        plt.title('Histograma de la imagen')
+        plt.xlabel('Niveles de gris')
+        plt.ylabel('Frecuencia')
+        plt.show()
+
+    ### Presentación en pantalla de la imagen ###
+    def imagen(self, nombre:str=None, show=True):
+        # Carga y muestra una imagen en escala de grises desde la ruta 
+        # almacenada en el archivo de texto.
+        while not nombre:
+            nombre = input("Por favor, ingrese el nombre de la imagen con extensión: ").strip()
+        
+        try:
+            ruta_imagen = self.primera_linea + '\\' + nombre 
+            #Imagen en escala de grises
+            imagen = Image.open(ruta_imagen).convert('L') 
+            # Con self.spec se guarda la imagen en un arreglo de numpy para procesarla
+            self.spec = np.array(imagen)
+            #Muestra la imagen
+            self.shape = self.spec.shape
+            logging.info(f"Se ejecuta el método imagen, leyendo la imagen {nombre}")
+            logging.info(f"El tamaño de la imagen es: {self.shape}")
+            if show:
+                imagen.show()  
+
+            logging.info(f"El nombre de la imagen de trabajo es: {imagen}")
+        except FileNotFoundError:
+            print(f"Error: La imagen '{ruta_imagen}' no se encontró.")
+        except Exception as e:
+            print(f"Ocurrió un error al abrir la imagen: {e}")
+    
+    
+    ###    ###
+    def modificar(self):
+        # Modifica la imagen de forma 
+        # conveniente para analilzar la densidad de probabilidad de la muestra tomada.
+        # Se ubica la moda como el nuevo valor de referencia y se resta a la imagen original.
+        if self.spec is None:
+            raise ValueError("La imagen no ha sido cargada. Por favor, carga una imagen primero.")
+        # Obtener el valor más frecuente (moda)
+        valores, cuentas = np.unique(self.spec, return_counts=True)
+        moda = valores[np.argmax(cuentas)]
+        # Crear una máscara booleana para los valores mayores o iguales a la moda
+        mascara = self.spec >= moda
+        
+        # Crear imagen filtrada con NaNs por defecto (tipo float64)
+
+        #Crea un array de NAN con la misma forma que la imagen original
+        self.imagef = np.full(self.shape, np.nan, dtype=np.float64)
+        # Asigna los valores de la imagen original restando la moda a la imagen filtrada 
+        # donde la máscara es True, donde es False se queda como NaN
+        self.imagef[mascara] = self.spec[mascara] - moda
+
+        # Actualiza las estadísticas de primer orden de la imagen filtrada
+        self.mediaf = np.nanmean(self.imagef)
+        self.desviacionf = np.nanstd(self.spec)
+        self.varianzaf = np.nanvar(self.spec)
+        self.constrastef = self.desviacionf / self.mediaf
+
+
+        #crea un array de valores distintos a NaN para graficar el histograma
+        valores_validos = self.imagef[~np.isnan(self.imagef)].flatten()
+        # Crear histograma normalizado (como una densidad de probabilidad)
+        conteo, bins, _= plt.hist(valores_validos, bins=256, density=True, alpha=0.5, color='gray', label='Datos')
+
+        # Eje x para la función teórica
+        x = np.linspace(0, np.max(valores_validos), 1000)
+
+        # Distribución exponencial teórica
+        pdf_expon = expon(scale=self.mediaf).pdf(x)
+
+        # Grafica de ambas
+        plt.plot(x, pdf_expon, 'r-', label='Distribución exponencial teórica')
+        plt.title('Comparación con distribución de speckle completamente polarizado')
+        plt.xlabel('Intensidad (ajustada)')
+        plt.ylabel('Densidad de probabilidad')
+        plt.legend()
+        plt.grid(True)
+        plt.show()
+    
+            
+    ### Normalización de la imagen ###
+    def normalizar(self):
+        # Normaliza los  valores de intensidad de la imagen y actualiza
+        # sus medeidas estadísticas.
+        self.spec = self.spec / np.max(self.spec)
+        logging.info(f"Se ejecuta el método normalizar")
+        
+    
+    ###   ###    
     def prueba(self):
         # Método para verificar que los datos son de un speckle completamente desarrollado, polarizado.
         if self.imagef is None:
@@ -314,12 +311,8 @@ class PropsSpeckle:
         X_0 = np.copy(x)[mask]
         Y_0 = np.log(p_x[mask])
         
-        
         Y = np.log(p_x) #Variable lineal
 
-       
-
-        
         plt.scatter(x,Y)
         plt.title('Diagrama de dispersión de los datos')
         plt.xlabel('Intensidad del pixel')
@@ -345,12 +338,8 @@ class PropsSpeckle:
         Var_X = np.sum((X_0 - media_I)**2)/(len(X_0)-1)
         Var_Y = np.sum((Y_0 - media_LogP)**2)/(len(X_0)-1)
         s_X = np.sqrt(Var_X)
-
-
         
         S_YX =  np.sqrt((len(X_0)-1)/(len(X_0)-2) * (Var_Y - b**2 * Var_X))
-        
-
 
         t = (b+1/self.mediaf)/(S_YX/(s_X*np.sqrt(len(X_0)-1)))
         
@@ -388,3 +377,84 @@ class PropsSpeckle:
         else:
             print("No se puede rechazar H₀: la pendiente podría ser -1/μ")
 
+
+    ### Prueba de bondad con Chi2 ###
+    def pruebaBondad(self):
+
+        # Crear un rango de todas las categorías posibles (0 a 255)
+        #categories = np.arange(256)
+
+        # Contar la frecuencia de cada valor en los datos
+        #counts = pd.Series(self.spec.flatten()).value_counts().reindex(categories, fill_value=0)
+
+        # Crear el DataFrame
+        #data = pd.DataFrame({'valor': categories, 'frecuencia': counts.values})
+        
+        #data['valor'] = pd.to_numeric(data['valor'], errors='coerce')
+
+        # Asumimos que los valores de 'NúmeroSemestres' son numéricos
+        #semestres = data['valor'].astype(float)
+        self.spec.flatten()
+        # Calcular la media 
+        mu = self.spec.flatten().mean()
+        # Paso 1: determinar bins asegurando al menos 5 observaciones por bin
+        # Comenzamos con un número alto y lo vamos reduciendo si hay bins con menos de 5
+        max_bins = 50
+        bins = max_bins
+
+        while bins > 1:
+            counts, bin_edges = np.histogram(self.spec.flatten(), bins=bins)
+            if all(counts >= 5):
+                break
+            bins -= 1
+
+        # Paso 2: calcular observados y esperados
+        observed, _ = np.histogram(self.spec.flatten(), bins=bin_edges)
+
+        # Calcular frecuencias esperadas usando la distribución exponencial negativa acumulada
+        cdf_values = expon.cdf(bin_edges, scale=mu)
+        expected = np.diff(cdf_values) * len(self.spec.flatten())
+        # Normalizar esperados
+        expected = expected * (observed.sum() / expected.sum())
+
+        # Calcular las posiciones centrales de los bins
+        bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
+
+        # Graficar
+        plt.bar(bin_centers, observed, width=np.diff(bin_edges), edgecolor='black',label='Observado')
+        plt.bar(bin_centers, expected, width=np.diff(bin_edges), edgecolor='red',alpha=0.5,label='Esperado')
+        plt.xlabel("Nivel de gris")
+        plt.ylabel("Frecuencia")
+        plt.title("Histogramas para la prueba de bondad")
+        plt.grid(True)
+        plt.legend()
+        plt.show()
+
+        # Paso 3: aplicar prueba chi-cuadrado
+        chi2_stat, p_value = chisquare(f_obs=observed, f_exp=expected)
+
+        print('media = {:.2f}'.format(mu))
+        print('El valor de chi2 es {:.2f} y el valor p es {:.1f} %. El número de intervalos es {}'.format(chi2_stat, 100*p_value,bins))
+
+
+
+    ### Cálculo de parámetros estadísticos ###
+    def statisticspro(self):
+
+        # Calcula la media, varianza y la desviación estándar de la imagen
+        self.media = np.mean(self.spec)
+        self.desviacion = np.std(self.spec)
+        self.varianza = np.var(self.spec)
+        self.constraste = self.desviacion / self.media
+
+        logging.info(f"Se ejecuta el método statisticspro")
+        logging.info(f"Valor promedio de la imagen = {self.media}")
+        logging.info(f"Valor desviación estándar de la imagen {self.desviacion}")
+        logging.info(f"Valor varianza de la imagen {self.varianza}")
+        logging.info(f"Valor contraste de la imagen {self.constraste}")
+
+        print(f"Valor de la intensidad media es = {self.media}")
+        print(f"Valor de la desviación estándar es = {self.desviacion}")
+        print(f"Valor de la varianza es = {self.varianza}")
+        print(f"Valor del contraste es = {self.constraste}")
+        
