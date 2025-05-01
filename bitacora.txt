@@ -1,4 +1,4 @@
-2025-04-23 13:49:43,130 - INFO - Se crea una instancia de PropSpeckle en la ruta c:\Users\usuario\Documents\GitHub\Speckle\ruta.txt
-2025-04-23 13:49:43,249 - INFO - Se ejecuta el método imagen, leyendo la imagen 0-3.tif
-2025-04-23 13:49:43,249 - INFO - El tamaño de la imagen es: (1024, 1280)
-2025-04-23 13:49:44,275 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=1280x1024 at 0x1AD54B8CFD0>
+2025-04-23 17:45:35,445 - INFO - Se crea una instancia de PropSpeckle en la ruta c:\Proyectos\Speckle\ruta.txt
+2025-04-23 17:45:35,516 - INFO - Se ejecuta el método imagen, leyendo la imagen 4-150.tif
+2025-04-23 17:45:35,516 - INFO - El tamaño de la imagen es: (1024, 1280)
+2025-04-23 17:45:36,010 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=1280x1024 at 0x25D101A3B10>
