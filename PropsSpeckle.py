@@ -5,7 +5,7 @@
 import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
-from scipy.stats import expon, linregress, chisquare, t as t_dist
+from scipy.stats import expon, linregress, chisquare, t as t_dist, kstest
 import sys
 import logging
 import os
@@ -435,8 +435,67 @@ class PropsSpeckle:
 
         print('media = {:.2f}'.format(mu))
         print('El valor de chi2 es {:.2f} y el valor p es {:.1f} %. El número de intervalos es {}'.format(chi2_stat, 100*p_value,bins))
+    
+    def pruebaBondadmod(self):
+        
+        # Crear un rango de todas las categorías posibles (0 a 255)
+        #categories = np.arange(256)
 
+        # Contar la frecuencia de cada valor en los datos
+        #counts = pd.Series(self.spec.flatten()).value_counts().reindex(categories, fill_value=0)
 
+        # Crear el DataFrame
+        #data = pd.DataFrame({'valor': categories, 'frecuencia': counts.values})
+        
+        #data['valor'] = pd.to_numeric(data['valor'], errors='coerce')
+
+        # Filtrar valores NaN
+        imagef_valid = self.imagef[~np.isnan(self.imagef)].flatten()
+
+        # Calcular la media
+        mu = self.mediaf
+
+        # Paso 1: determinar bins asegurando al menos 5 observaciones por bin
+# Comenzamos con un número alto y lo vamos reduciendo si hay bins con menos de 5
+        max_bins = 50
+        bins = max_bins
+
+        while bins > 1:
+            counts, bin_edges = np.histogram(imagef_valid, bins=bins)
+            if all(counts >= 5):
+                break
+            bins -= 1
+
+        # Paso 2: calcular observados y esperados
+        observed, _ = np.histogram(imagef_valid, bins=bin_edges)
+
+        # Calcular frecuencias esperadas usando la distribución exponencial negativa acumulada
+        cdf_values = expon.cdf(bin_edges, scale=mu)
+        expected = np.diff(cdf_values) * len(imagef_valid)
+        # Normalizar esperados
+        expected = expected * (observed.sum() / expected.sum())
+
+        # Calcular las posiciones centrales de los bins
+        bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
+
+        # Graficar
+        plt.bar(bin_centers, observed, width=np.diff(bin_edges), edgecolor='black', label='Observado')
+        plt.bar(bin_centers, expected, width=np.diff(bin_edges), edgecolor='red', alpha=0.5, label='Esperado')
+        plt.xlabel("Nivel de gris")
+        plt.ylabel("Frecuencia")
+        plt.title("Histogramas para la prueba de bondad")
+        plt.grid(True)
+        plt.legend()
+        plt.show()
+
+        # Paso 3: aplicar prueba chi-cuadrado
+        chi2_stat, p_value = chisquare(f_obs=observed, f_exp=expected)
+
+        print('media = {:.2f}'.format(mu))
+        print('El valor de chi2 es {:.2f} y el valor p es {:.1f} %. El número de intervalos es {}'.format(chi2_stat, 100 * p_value, bins))
+        
+        stat, p_ks = kstest(imagef_valid, 'expon', args=(0, mu))
+        print(f"KS-stat = {stat:.3f}, p-value = {p_ks:.3f}")
 
     ### Cálculo de parámetros estadísticos ###
     def statisticspro(self):
@@ -457,4 +516,3 @@ class PropsSpeckle:
         print(f"Valor de la desviación estándar es = {self.desviacion}")
         print(f"Valor de la varianza es = {self.varianza}")
         print(f"Valor del contraste es = {self.constraste}")
-        
