@@ -356,7 +356,7 @@ class PropsSpeckle:
     
     
     ###    ###
-    def modificar(self):
+    def modificar(self, show=True):
         # Modifica la imagen de forma 
         # conveniente para analilzar la densidad de probabilidad de la muestra tomada.
         # Se ubica la moda como el nuevo valor de referencia y se resta a la imagen original.
@@ -382,7 +382,6 @@ class PropsSpeckle:
         self.varianzaf = np.nanvar(self.spec)
         self.constrastef = self.desviacionf / self.mediaf
 
-
         #crea un array de valores distintos a NaN para graficar el histograma
         valores_validos = self.imagef[~np.isnan(self.imagef)].flatten()
         # Crear histograma normalizado (como una densidad de probabilidad)
@@ -394,14 +393,15 @@ class PropsSpeckle:
         # Distribución exponencial teórica
         pdf_expon = expon(scale=self.mediaf).pdf(x)
 
-        # Grafica de ambas
-        plt.plot(x, pdf_expon, 'r-', label='Distribución exponencial teórica')
-        plt.title('Comparación con distribución de speckle completamente polarizado')
-        plt.xlabel('Intensidad (ajustada)')
-        plt.ylabel('Densidad de probabilidad')
-        plt.legend()
-        plt.grid(True)
-        plt.show()
+        if show:
+            # Grafica de ambas
+            plt.plot(x, pdf_expon, 'r-', label='Distribución exponencial teórica')
+            plt.title('Comparación con distribución de speckle completamente polarizado')
+            plt.xlabel('Intensidad (ajustada)')
+            plt.ylabel('Densidad de probabilidad')
+            plt.legend()
+            plt.grid(True)
+            plt.show()
     
             
     ### Normalización de la imagen ###
