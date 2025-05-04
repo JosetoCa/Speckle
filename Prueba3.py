@@ -16,9 +16,12 @@ print('Nombre:', espacio.name)
 print('Ruta',espacio.primera_linea)  # None
 
 #Se llama una imagen, en este caso se da el nombre
-espacio.imagen('4-150.tif',show=True)
+espacio.imagen('4-150-l.tif',show=True)
 espacio.modificar()
-espacio.pruebaBondadmod()
-espacio.pruebaBondad()
+#espacio.autocorrelacion(imagen='o')
+#espacio.autocorrelacion(imagen='m')
+espacio.filtro()
+espacio.pruebaBondad(imagen='f')
+
 
 
