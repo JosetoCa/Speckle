@@ -76,6 +76,7 @@ class PropsSpeckle:
         if self.spec is None:
             raise ValueError("La imagen no ha sido cargada. Por favor, carga una imagen primero.")
         if imagen == 'o':
+            print("Calculando la autocorrelación de la imagen original...")
             # Calcula la autocorrelación de la imagen
             # Pixel_size es el tamaño del píxel en micrómetros.
             # Dim es la dimensión de la autocorrelación (1 o 2)
@@ -151,6 +152,7 @@ class PropsSpeckle:
             logging.info(f"Se ejecuta el método autocorrelacion")
             return acorr
         if imagen == 'm':
+            print("Calculando la autocorrelación de la imagen modificada...")
             # Calcula la autocorrelación de la imagen modificada
             # Calcula la autocorrelación de la imagen filtrada
             # Pixel_size es el tamaño del píxel en micrómetros.
@@ -210,13 +212,7 @@ class PropsSpeckle:
             # Buscar el radio donde cae por debajo del valor medio (puedes ajustar criterio)
             r_mid = np.argmax(radial_profile < mid_val)
 
-            # Graficar
-            plt.plot(radial_profile)
-            plt.axhline(mid_val, color='r', linestyle='--', label='Valor medio')
-            plt.axvline(r_mid, color='g', linestyle='--', label=f'R = {r_mid}')
-            plt.title('Perfil radial')
-            plt.legend()
-            plt.show()
+            self.pixel_medio = r_mid
 
             print(f"La intensidad cae al valor medio entre máximo y mínimo en un radio de {r_mid} píxeles.")
 
@@ -315,10 +311,13 @@ class PropsSpeckle:
     def histograma(self, imagen='o'):
         # Genera un histograma de la imagen deseada
         if imagen == 'o':
+            print("Calculando el histograma de la imagen original...")
             image = self.spec.flatten()
         if imagen == 'm':
+            print("Calculando el histograma de la imagen modificada...")
             image = self.imagef[~np.isnan(self.imagef)].flatten()
         if imagen == 'f':
+            print("Calculando el histograma de la imagen filtrada...")
             image = self.filtrada.flatten()
         # Crear histograma normalizado (como una densidad de probabilidad)
         plt.hist(image, bins=256, density=True)
@@ -416,15 +415,18 @@ class PropsSpeckle:
     def prueba(self, imagen = 'o'):
         # Método para verificar que los datos son de un speckle completamente desarrollado, polarizado.
         if imagen == 'o':
+            print("Calculando la prueba de hipótesis de ajuste para la imagen original...")
             mu = self.spec.flatten().mean()
             image = self.spec.flatten()
         if imagen == 'm':
+            print("Calculando la prueba de hipótesis de ajuste para la imagen modificada...")
             if self.imagef is None:
                 raise ValueError("La imagen no ha sido modificada. Por favor, modifica la imagen primero.")
             mu = self.mediaf
             # Filtrar valores NaNs
             image = self.imagef[~np.isnan(self.imagef)].flatten()
         if imagen == 'f':
+            print("Calculando la prueba de hipótesis de ajuste para la imagen filtrada...")
             mu = self.filtrada.flatten().mean()
             image = self.filtrada.flatten()
         
@@ -467,18 +469,13 @@ class PropsSpeckle:
         S_YX =  np.sqrt((len(X_0)-1)/(len(X_0)-2) * (Var_Y - b**2 * Var_X))
 
         t = (b+1/mu)/(S_YX/(s_X*np.sqrt(len(X_0)-1)))
-        
-        print(f"t estadístico: {t}")
+
 
         # Hacemos la regresión lineal
         slope, intercept, r_value, p_value, std_err = linregress(X_0, Y_0)
 
-        # Mostramos resultados de la regresión
-        print(f"Pendiente (b): {slope}")
-        print(f"Intercepto (a): {intercept}")
-        print(f"Error estándar de la pendiente: {std_err}")
-        print(f"Valor p (para H0: pendiente = 0): {p_value}")
-        print(f"Coeficiente de correlación r: {r_value}")
+
+
 
         # Valor teórico de la pendiente si fuera exponencial
         b0 = -1 / mu
@@ -504,13 +501,16 @@ class PropsSpeckle:
     ### Prueba de bondad con Chi2 ###
     def pruebaBondad(self, imagen='o'):
         if imagen == 'o':
+            print("Calculando la prueba de bondad de ajuste para la imagen original...")
             mu = self.spec.flatten().mean()
             image = self.spec.flatten()
-        if imagen == 'm': 
+        if imagen == 'm':
+            print("Calculando la prueba de bondad de ajuste para la imagen modificada...")
             mu = self.mediaf
             # Filtrar valores NaNs
             image = self.imagef[~np.isnan(self.imagef)].flatten()
         if imagen == 'f':
+            print("Calculando la prueba de bondad de ajuste para la imagen filtrada...")
             mu = self.filtrada.flatten().mean()
             image = self.filtrada.flatten()
 
