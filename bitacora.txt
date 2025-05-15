@@ -1,4 +1,15 @@
-2025-04-23 17:45:35,445 - INFO - Se crea una instancia de PropSpeckle en la ruta c:\Proyectos\Speckle\ruta.txt
-2025-04-23 17:45:35,516 - INFO - Se ejecuta el método imagen, leyendo la imagen 4-150.tif
-2025-04-23 17:45:35,516 - INFO - El tamaño de la imagen es: (1024, 1280)
-2025-04-23 17:45:36,010 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=1280x1024 at 0x25D101A3B10>
+2025-05-11 19:04:28,367 - INFO - Se crea una instancia de PropSpeckle en la ruta c:\Proyectos\Speckle\ruta.txt
+2025-05-11 19:04:28,393 - INFO - Se ejecuta el método imagen, leyendo la imagen 4-150-l.tif
+2025-05-11 19:04:28,393 - INFO - El tamaño de la imagen es: (1024, 1280)
+2025-05-11 19:04:28,393 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=1280x1024 at 0x23EEE858910>
+2025-05-11 19:04:28,664 - INFO - Se ejecuta el método histograma
+2025-05-11 19:04:29,040 - INFO - Se crea una instancia de PropSpeckle en la ruta c:\Proyectos\Speckle\ruta.txt
+2025-05-11 19:04:29,072 - INFO - Se ejecuta el método imagen, leyendo la imagen 4-150-l.tif
+2025-05-11 19:04:29,073 - INFO - El tamaño de la imagen es: (1024, 1280)
+2025-05-11 19:04:29,073 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=1280x1024 at 0x23EEE812A50>
+2025-05-11 19:04:30,818 - INFO - Se crea una instancia de PropSpeckle en la ruta c:\Proyectos\Speckle\ruta.txt
+2025-05-11 19:04:30,838 - INFO - Se ejecuta el método imagen, leyendo la imagen 4-150-l.tif
+2025-05-11 19:04:30,838 - INFO - El tamaño de la imagen es: (1024, 1280)
+2025-05-11 19:04:30,838 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=1280x1024 at 0x23EBD1FB070>
+2025-05-11 19:04:32,779 - INFO - Se ejecuta el método autocorrelacion
+2025-05-11 19:04:33,429 - INFO - Se ejecuta el método histograma

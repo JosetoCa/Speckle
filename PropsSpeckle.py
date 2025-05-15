@@ -10,6 +10,7 @@ import sys
 import logging
 import os
 import pandas as pd
+from scipy.ndimage import uniform_filter
 
 import sys
 
@@ -62,6 +63,8 @@ class PropsSpeckle:
         self.desviacionf = None
         self.varianzaf = None
         self.constrastef = None
+        self.filtrada = None
+        self.pixel_medio = None
 
 
 
@@ -69,104 +72,176 @@ class PropsSpeckle:
 ## Métodos de la clase PropsSpeckle ##
 
 ### Estadísticas de segundo orden ###
-    def autocorrelacion(self, show=True, dim = 1, pixel_size=5.2):
+    def autocorrelacion(self, imagen = 'o', show=True, dim = 1, pixel_size=5.2):
         if self.spec is None:
             raise ValueError("La imagen no ha sido cargada. Por favor, carga una imagen primero.")
-        # Calcula la autocorrelación de la imagen
-        # Pixel_size es el tamaño del píxel en micrómetros.
-        # Dim es la dimensión de la autocorrelación (1 o 2)
-        # show indica si se debe mostrar la autocorrelación o no.
-        f = np.fft.fft2(self.spec)  # Transformada de Fourier
-        f_conj = np.conj(f)     # Conjugado complejo
-        acorr = np.fft.ifft2(f * f_conj)  # Autocorrelación inversa
-        acorr = np.fft.fftshift(acorr)  # Centrar la autocorrelación
-        H, W = self.shape  # Dimensiones de la imagen
-        x = np.linspace(-W//2, W//2, W) * pixel_size  # En micrómetros
-        y = np.linspace(-H//2, H//2, H) * pixel_size  # En micrómetros
+        if imagen == 'o':
+            print("Calculando la autocorrelación de la imagen original...")
+            # Calcula la autocorrelación de la imagen
+            # Pixel_size es el tamaño del píxel en micrómetros.
+            # Dim es la dimensión de la autocorrelación (1 o 2)
+            # show indica si se debe mostrar la autocorrelación o no.
+            f = np.fft.fft2(self.spec)  # Transformada de Fourier
+            f_conj = np.conj(f)     # Conjugado complejo
+            acorr = np.fft.ifft2(f * f_conj)  # Autocorrelación inversa
+            acorr = np.fft.fftshift(acorr)  # Centrar la autocorrelación
 
-        if show:
-            if dim == 1:
-                # Mostrar la autocorrelación en una dimensión
-                y = acorr[H//2,:]
-                plt.plot(x, y, c='black')
-                plt.scatter(x, y, s=8, c='red')
-                plt.title('Autocorrelación')
-                plt.xlabel('Desplazamiento en x (µm)')
-                plt.ylabel('Autocorrelación')
-                plt.show()
-            elif dim == 2:
-                # Mostrar la autocorrelación en dos dimensiones
-                plt.imshow(np.abs(acorr), extent=[x.min(), x.max(), y.min(), y.max()], cmap='gray')
-                plt.title('Autocorrelación')
-                plt.xlabel("Desplazamiento en x (µm)")
-                plt.ylabel("Desplazamiento en y (µm)")
-                plt.title("Autocorrelación en unidades de longitud")
-                plt.colorbar()
-                plt.show()
-        logging.info(f"Se ejecuta el método autocorrelacion")
-        return acorr
-    
-    ###   ###
-    def autocorrelacionf(self, show=True, dim = 1, pixel_size=5.2):
-        # Calcula la autocorrelación de la imagen filtrada
-        # Pixel_size es el tamaño del píxel en micrómetros.
-        # Dim es la dimensión de la autocorrelación (1 o 2)
-        # show indica si se debe mostrar la autocorrelación o no.
-        if self.spec is None or self.imagef is None:
-            # Verifica si la imagen original o la imagen filtrada no han sido cargadas
-            raise ValueError("La imagen no ha sido cargada o modificada. Por favor, carga una imagen primero.")
-        # Los valores NaN se reemplazan por 0.0 para evitar problemas en la FFT
-        # Pero se crea una máscara para no perder la información de la imagen original
-        # La idea Luego dividir las autocorrelaciones para quitar el efecto de la máscara de 0s
-        
-        # Se cambian Nans por 0.0 para evitar problemas en la FFT
-        imagen_temp = np.nan_to_num(self.imagef, nan=0.0)
-        # Se crea una máscara para los valores originales
-        # La máscara es 1 donde la imagen original no es NaN y 0 donde sí lo es
-        mask = ~np.isnan(self.imagef)
-        mask = mask.astype(float)
+            # Encontrar el píxel máximo (pico central)
+            max_pos = np.unravel_index(np.argmax(acorr), acorr.shape)
+            y0, x0 = max_pos
+            max_val = acorr[y0, x0]
 
-        # FFT de la imagen y la máscara
-        fft_img = np.fft.fft2(imagen_temp)
-        fft_mask = np.fft.fft2(mask)
+            # Mínimo de la imagen
+            min_val = acorr.min()
 
-        # Autocorrelación de la imagen y de la máscara
-        autocorr_img = np.fft.fftshift(np.real(np.fft.ifft2(fft_img * np.conj(fft_img))))
-        autocorr_mask = np.fft.fftshift(np.real(np.fft.ifft2(fft_mask * np.conj(fft_mask))))
+            # Valor medio entre máximo y mínimo
+            mid_val = (max_val + min_val) / 2
 
-        # Normalizar (evitando división por cero)
-        autocorr_norm = np.divide(
-            autocorr_img,
-            autocorr_mask,
-            out=np.zeros_like(autocorr_img),
-            where=autocorr_mask > 0
-        )
+            # Crear malla de distancias desde el centro del pico
+            Y, X = np.indices(acorr.shape)
+            R = np.sqrt((X - x0)**2 + (Y - y0)**2)
+            R = R.astype(int)
 
-        # Mostrar
-        
-        if show:
+            # Perfil radial promedio
+            r_max = R.max()
+            radial_profile = np.array([acorr[R == r].mean() for r in range(r_max)])
+
+            # Buscar el radio donde cae por debajo del valor medio (puedes ajustar criterio)
+            r_mid = np.argmax(radial_profile < mid_val)
+            self.pixel_medio = r_mid  
+
+            # Graficar
+            plt.plot(radial_profile)
+            plt.axhline(mid_val, color='r', linestyle='--', label='Valor medio')
+            plt.axvline(r_mid, color='g', linestyle='--', label=f'R = {r_mid}')
+            plt.title('Perfil radial')
+            plt.legend()
+            plt.show()
+
+            print(f"La intensidad cae al valor medio entre máximo y mínimo en un radio de {r_mid} píxeles.")
+
+
+
+
+
+
             H, W = self.shape  # Dimensiones de la imagen
             x = np.linspace(-W//2, W//2, W) * pixel_size  # En micrómetros
             y = np.linspace(-H//2, H//2, H) * pixel_size  # En micrómetros
-            if dim == 1:
-                # Mostrar la autocorrelación en una dimensión
-                y = autocorr_norm[H//2,:]
-                plt.plot(x, y, c='black')
-                plt.scatter(x, y, s=8, c='red')
-                plt.title('Autocorrelación')
-                plt.xlabel('Desplazamiento en x (µm)')
-                plt.ylabel('Autocorrelación')
-                plt.show()
-            elif dim == 2:
-                # Mostrar la autocorrelación en dos dimensiones
-                plt.imshow(np.abs(autocorr_norm), extent=[x.min(), x.max(), y.min(), y.max()], cmap='gray')
-                plt.title('Autocorrelación')
-                plt.xlabel("Desplazamiento en x (µm)")
-                plt.ylabel("Desplazamiento en y (µm)")
-                plt.title("Autocorrelación en unidades de longitud")
-                plt.colorbar()
-                plt.show()
-        return autocorr_norm
+            
+
+            if show:
+                if dim == 1:
+                    # Mostrar la autocorrelación en una dimensión
+                    y = acorr[H//2,:]
+                    plt.plot(x, y, c='black')
+                    plt.scatter(x, y, s=8, c='red')
+                    plt.title('Autocorrelación')
+                    plt.xlabel('Desplazamiento en x (µm)')
+                    plt.ylabel('Autocorrelación')
+                    plt.show()
+                elif dim == 2:
+                    # Mostrar la autocorrelación en dos dimensiones
+                    plt.imshow(np.abs(acorr), extent=[x.min(), x.max(), y.min(), y.max()], cmap='gray')
+                    plt.title('Autocorrelación')
+                    plt.xlabel("Desplazamiento en x (µm)")
+                    plt.ylabel("Desplazamiento en y (µm)")
+                    plt.title("Autocorrelación en unidades de longitud")
+                    plt.colorbar()
+                    plt.show()
+            logging.info(f"Se ejecuta el método autocorrelacion")
+            return acorr
+        if imagen == 'm':
+            print("Calculando la autocorrelación de la imagen modificada...")
+            # Calcula la autocorrelación de la imagen modificada
+            # Calcula la autocorrelación de la imagen filtrada
+            # Pixel_size es el tamaño del píxel en micrómetros.
+            # Dim es la dimensión de la autocorrelación (1 o 2)
+            # show indica si se debe mostrar la autocorrelación o no.
+            if self.spec is None and self.imagef is None:
+            # Verifica si la imagen original o la imagen filtrada no han sido cargadas
+                raise ValueError("La imagen no ha sido cargada y modificada. Por favor, carga una imagen primero.")
+            # Los valores NaN se reemplazan por 0.0 para evitar problemas en la FFT
+            # Pero se crea una máscara para no perder la información de la imagen original
+            # La idea Luego dividir las autocorrelaciones para quitar el efecto de la máscara de 0s
+            
+            # Se cambian Nans por 0.0 para evitar problemas en la FFT
+            imagen_temp = np.nan_to_num(self.imagef, nan=0.0)
+            # Se crea una máscara para los valores originales
+            # La máscara es 1 donde la imagen original no es NaN y 0 donde sí lo es
+            mask = ~np.isnan(self.imagef)
+            mask = mask.astype(float)
+
+            # FFT de la imagen y la máscara
+            fft_img = np.fft.fft2(imagen_temp)
+            fft_mask = np.fft.fft2(mask)
+
+            # Autocorrelación de la imagen y de la máscara
+            autocorr_img = np.fft.fftshift(np.real(np.fft.ifft2(fft_img * np.conj(fft_img))))
+            autocorr_mask = np.fft.fftshift(np.real(np.fft.ifft2(fft_mask * np.conj(fft_mask))))
+
+            # Normalizar (evitando división por cero)
+            autocorr_norm = np.divide(
+                autocorr_img,
+                autocorr_mask,
+                out=np.zeros_like(autocorr_img),
+                where=autocorr_mask > 0
+            )
+            
+
+            # Encontrar el píxel máximo (pico central)
+            max_pos = np.unravel_index(np.argmax(autocorr_norm), autocorr_norm.shape)
+            y0, x0 = max_pos
+            max_val = autocorr_norm[y0, x0]
+
+            # Mínimo de la imagen
+            min_val = autocorr_norm.min()
+
+            # Valor medio entre máximo y mínimo
+            mid_val = (max_val + min_val) / 2
+
+            # Crear malla de distancias desde el centro del pico
+            Y, X = np.indices(autocorr_norm.shape)
+            R = np.sqrt((X - x0)**2 + (Y - y0)**2)
+            R = R.astype(int)
+
+            # Perfil radial promedio
+            r_max = R.max()
+            radial_profile = np.array([autocorr_norm[R == r].mean() for r in range(r_max)])
+
+            # Buscar el radio donde cae por debajo del valor medio (puedes ajustar criterio)
+            r_mid = np.argmax(radial_profile < mid_val)
+
+            self.pixel_medio = r_mid
+
+            print(f"La intensidad cae al valor medio entre máximo y mínimo en un radio de {r_mid} píxeles.")
+
+
+            # Mostrar
+            
+            if show:
+                H, W = self.shape  # Dimensiones de la imagen
+                x = np.linspace(-W//2, W//2, W) * pixel_size  # En micrómetros
+                y = np.linspace(-H//2, H//2, H) * pixel_size  # En micrómetros
+                if dim == 1:
+                    # Mostrar la autocorrelación en una dimensión
+                    y = autocorr_norm[H//2,:]
+                    plt.plot(x, y, c='black')
+                    plt.scatter(x, y, s=8, c='red')
+                    plt.title('Autocorrelación')
+                    plt.xlabel('Desplazamiento en x (µm)')
+                    plt.ylabel('Autocorrelación')
+                    plt.show()
+                elif dim == 2:
+                    # Mostrar la autocorrelación en dos dimensiones
+                    plt.imshow(np.abs(autocorr_norm), extent=[x.min(), x.max(), y.min(), y.max()], cmap='gray')
+                    plt.title('Autocorrelación')
+                    plt.xlabel("Desplazamiento en x (µm)")
+                    plt.ylabel("Desplazamiento en y (µm)")
+                    plt.title("Autocorrelación en unidades de longitud")
+                    plt.colorbar()
+                    plt.show()
+            return autocorr_norm     
 
 
     ###    ###
@@ -203,17 +278,55 @@ class PropsSpeckle:
         logging.info(f"Se ejecuta el método cal_varianza")
         logging.info(f"Valor varianza de la imagen {self.varianza}")
         return self.varianza
+    
+    def filtro(self, show=True):
+        # Aplica un filtro a la imagen y muestra el resultado
+        if self.spec is None:
+            raise ValueError("La imagen no ha sido cargada. Por favor, carga una imagen primero.")
+        # Aplicar filtro de promediado de 3x3
+        smoothed = uniform_filter(self.spec, size=8)
+
+        if self.pixel_medio is None:
+            self.autocorrelacion(imagen='o', show=False)
+
+        # Tomar solo los píxeles cada 4 pasos para reducir
+        self.filtrada = smoothed[1::self.pixel_medio, 1::self.pixel_medio]
+        if show == True:
+            # Mostrar la imagen original y la imagen filtrada
+            plt.figure(figsize=(10, 5))
+            plt.subplot(1, 2, 1)
+            plt.imshow(self.spec, cmap='gray')
+            plt.title('Imagen original')
+            
+            plt.subplot(1, 2, 2)
+            plt.imshow(self.filtrada, cmap='gray')
+        
+            plt.title('Imagen filtrada')
+            plt.show()
+        return self.filtrada                                                    
+        logging.info(f"Se ejecuta el método filtro")
 
 
     #### Histograma de la imagen ###
-    def histograma(self):
-        # Genera un histograma de la imagen
-        plt.hist(self.spec.flatten(), bins=256, density=True)
+    def histograma(self, imagen='o'):
+        # Genera un histograma de la imagen deseada
+        if imagen == 'o':
+            print("Calculando el histograma de la imagen original...")
+            image = self.spec.flatten()
+        if imagen == 'm':
+            print("Calculando el histograma de la imagen modificada...")
+            image = self.imagef[~np.isnan(self.imagef)].flatten()
+        if imagen == 'f':
+            print("Calculando el histograma de la imagen filtrada...")
+            image = self.filtrada.flatten()
+        # Crear histograma normalizado (como una densidad de probabilidad)
+        plt.hist(image, bins=256, density=True)
         plt.title('Histograma de la imagen')
         plt.xlabel('Niveles de gris')
         plt.ylabel('Frecuencia')
         plt.show()
-
+        logging.info(f"Se ejecuta el método histograma")
+    
     ### Presentación en pantalla de la imagen ###
     def imagen(self, nombre:str=None, show=True):
         # Carga y muestra una imagen en escala de grises desde la ruta 
@@ -242,7 +355,7 @@ class PropsSpeckle:
     
     
     ###    ###
-    def modificar(self):
+    def modificar(self, show=True):
         # Modifica la imagen de forma 
         # conveniente para analilzar la densidad de probabilidad de la muestra tomada.
         # Se ubica la moda como el nuevo valor de referencia y se resta a la imagen original.
@@ -268,7 +381,6 @@ class PropsSpeckle:
         self.varianzaf = np.nanvar(self.spec)
         self.constrastef = self.desviacionf / self.mediaf
 
-
         #crea un array de valores distintos a NaN para graficar el histograma
         valores_validos = self.imagef[~np.isnan(self.imagef)].flatten()
         # Crear histograma normalizado (como una densidad de probabilidad)
@@ -280,14 +392,15 @@ class PropsSpeckle:
         # Distribución exponencial teórica
         pdf_expon = expon(scale=self.mediaf).pdf(x)
 
-        # Grafica de ambas
-        plt.plot(x, pdf_expon, 'r-', label='Distribución exponencial teórica')
-        plt.title('Comparación con distribución de speckle completamente polarizado')
-        plt.xlabel('Intensidad (ajustada)')
-        plt.ylabel('Densidad de probabilidad')
-        plt.legend()
-        plt.grid(True)
-        plt.show()
+        if show:
+            # Grafica de ambas
+            plt.plot(x, pdf_expon, 'r-', label='Distribución exponencial teórica')
+            plt.title('Comparación con distribución de speckle completamente polarizado')
+            plt.xlabel('Intensidad (ajustada)')
+            plt.ylabel('Densidad de probabilidad')
+            plt.legend()
+            plt.grid(True)
+            plt.show()
     
             
     ### Normalización de la imagen ###
@@ -299,13 +412,27 @@ class PropsSpeckle:
         
     
     ###   ###    
-    def prueba(self):
+    def prueba(self, imagen = 'o'):
         # Método para verificar que los datos son de un speckle completamente desarrollado, polarizado.
-        if self.imagef is None:
-            raise ValueError("La imagen no ha sido modificada. Por favor, modifica la imagen primero.")
-        y, x = np.histogram(self.imagef[~np.isnan(self.imagef)].flatten(), bins=256, range=None, density=True, weights=None)
+        if imagen == 'o':
+            print("Calculando la prueba de hipótesis de ajuste para la imagen original...")
+            mu = self.spec.flatten().mean()
+            image = self.spec.flatten()
+        if imagen == 'm':
+            print("Calculando la prueba de hipótesis de ajuste para la imagen modificada...")
+            if self.imagef is None:
+                raise ValueError("La imagen no ha sido modificada. Por favor, modifica la imagen primero.")
+            mu = self.mediaf
+            # Filtrar valores NaNs
+            image = self.imagef[~np.isnan(self.imagef)].flatten()
+        if imagen == 'f':
+            print("Calculando la prueba de hipótesis de ajuste para la imagen filtrada...")
+            mu = self.filtrada.flatten().mean()
+            image = self.filtrada.flatten()
+        
+        y, x = np.histogram(image, bins=256, range=None, density=True, weights=None)
         x = x[:-1]  # Calcular los centros de los bins
-        N = len(self.imagef[~np.isnan(self.imagef)].flatten()) #Numero de datos
+        
         p_x = y # Densidad de probabilidad de X
         mask = p_x != 0 # Esta mascara nos permite quedarnos únicamente con los datos para los que poseemos información
         X_0 = np.copy(x)[mask]
@@ -341,22 +468,16 @@ class PropsSpeckle:
         
         S_YX =  np.sqrt((len(X_0)-1)/(len(X_0)-2) * (Var_Y - b**2 * Var_X))
 
-        t = (b+1/self.mediaf)/(S_YX/(s_X*np.sqrt(len(X_0)-1)))
-        
-        print(f"t estadístico: {t}")
+        t = (b+1/mu)/(S_YX/(s_X*np.sqrt(len(X_0)-1)))
+
 
         # Hacemos la regresión lineal
         slope, intercept, r_value, p_value, std_err = linregress(X_0, Y_0)
 
-        # Mostramos resultados de la regresión
-        print(f"Pendiente (b): {slope}")
-        print(f"Intercepto (a): {intercept}")
-        print(f"Error estándar de la pendiente: {std_err}")
-        print(f"Valor p (para H0: pendiente = 0): {p_value}")
-        print(f"Coeficiente de correlación r: {r_value}")
+
+
 
         # Valor teórico de la pendiente si fuera exponencial
-        mu = self.mediaf
         b0 = -1 / mu
         print(f"Valor teórico de la pendiente: {b0}")
         print(f"Valor de la pendiente: {slope}")
@@ -377,43 +498,37 @@ class PropsSpeckle:
         else:
             print("No se puede rechazar H₀: la pendiente podría ser -1/μ")
 
-
     ### Prueba de bondad con Chi2 ###
-    def pruebaBondad(self):
+    def pruebaBondad(self, imagen='o'):
+        if imagen == 'o':
+            print("Calculando la prueba de bondad de ajuste para la imagen original...")
+            mu = self.spec.flatten().mean()
+            image = self.spec.flatten()
+        if imagen == 'm':
+            print("Calculando la prueba de bondad de ajuste para la imagen modificada...")
+            mu = self.mediaf
+            # Filtrar valores NaNs
+            image = self.imagef[~np.isnan(self.imagef)].flatten()
+        if imagen == 'f':
+            print("Calculando la prueba de bondad de ajuste para la imagen filtrada...")
+            mu = self.filtrada.flatten().mean()
+            image = self.filtrada.flatten()
 
-        # Crear un rango de todas las categorías posibles (0 a 255)
-        #categories = np.arange(256)
-
-        # Contar la frecuencia de cada valor en los datos
-        #counts = pd.Series(self.spec.flatten()).value_counts().reindex(categories, fill_value=0)
-
-        # Crear el DataFrame
-        #data = pd.DataFrame({'valor': categories, 'frecuencia': counts.values})
-        
-        #data['valor'] = pd.to_numeric(data['valor'], errors='coerce')
-
-        # Asumimos que los valores de 'NúmeroSemestres' son numéricos
-        #semestres = data['valor'].astype(float)
-        self.spec.flatten()
-        # Calcular la media 
-        mu = self.spec.flatten().mean()
-        # Paso 1: determinar bins asegurando al menos 5 observaciones por bin
-        # Comenzamos con un número alto y lo vamos reduciendo si hay bins con menos de 5
         max_bins = 50
         bins = max_bins
 
         while bins > 1:
-            counts, bin_edges = np.histogram(self.spec.flatten(), bins=bins)
+            counts, bin_edges = np.histogram(image, bins=bins)
             if all(counts >= 5):
                 break
             bins -= 1
 
         # Paso 2: calcular observados y esperados
-        observed, _ = np.histogram(self.spec.flatten(), bins=bin_edges)
+        observed, _ = np.histogram(image, bins=bin_edges)
 
         # Calcular frecuencias esperadas usando la distribución exponencial negativa acumulada
         cdf_values = expon.cdf(bin_edges, scale=mu)
-        expected = np.diff(cdf_values) * len(self.spec.flatten())
+        expected = np.diff(cdf_values) * len(image)
         # Normalizar esperados
         expected = expected * (observed.sum() / expected.sum())
 
@@ -435,67 +550,6 @@ class PropsSpeckle:
 
         print('media = {:.2f}'.format(mu))
         print('El valor de chi2 es {:.2f} y el valor p es {:.1f} %. El número de intervalos es {}'.format(chi2_stat, 100*p_value,bins))
-    
-    def pruebaBondadmod(self):
-        
-        # Crear un rango de todas las categorías posibles (0 a 255)
-        #categories = np.arange(256)
-
-        # Contar la frecuencia de cada valor en los datos
-        #counts = pd.Series(self.spec.flatten()).value_counts().reindex(categories, fill_value=0)
-
-        # Crear el DataFrame
-        #data = pd.DataFrame({'valor': categories, 'frecuencia': counts.values})
-        
-        #data['valor'] = pd.to_numeric(data['valor'], errors='coerce')
-
-        # Filtrar valores NaN
-        imagef_valid = self.imagef[~np.isnan(self.imagef)].flatten()
-
-        # Calcular la media
-        mu = self.mediaf
-
-        # Paso 1: determinar bins asegurando al menos 5 observaciones por bin
-# Comenzamos con un número alto y lo vamos reduciendo si hay bins con menos de 5
-        max_bins = 50
-        bins = max_bins
-
-        while bins > 1:
-            counts, bin_edges = np.histogram(imagef_valid, bins=bins)
-            if all(counts >= 5):
-                break
-            bins -= 1
-
-        # Paso 2: calcular observados y esperados
-        observed, _ = np.histogram(imagef_valid, bins=bin_edges)
-
-        # Calcular frecuencias esperadas usando la distribución exponencial negativa acumulada
-        cdf_values = expon.cdf(bin_edges, scale=mu)
-        expected = np.diff(cdf_values) * len(imagef_valid)
-        # Normalizar esperados
-        expected = expected * (observed.sum() / expected.sum())
-
-        # Calcular las posiciones centrales de los bins
-        bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
-
-        # Graficar
-        plt.bar(bin_centers, observed, width=np.diff(bin_edges), edgecolor='black', label='Observado')
-        plt.bar(bin_centers, expected, width=np.diff(bin_edges), edgecolor='red', alpha=0.5, label='Esperado')
-        plt.xlabel("Nivel de gris")
-        plt.ylabel("Frecuencia")
-        plt.title("Histogramas para la prueba de bondad")
-        plt.grid(True)
-        plt.legend()
-        plt.show()
-
-        # Paso 3: aplicar prueba chi-cuadrado
-        chi2_stat, p_value = chisquare(f_obs=observed, f_exp=expected)
-
-        print('media = {:.2f}'.format(mu))
-        print('El valor de chi2 es {:.2f} y el valor p es {:.1f} %. El número de intervalos es {}'.format(chi2_stat, 100 * p_value, bins))
-        
-        stat, p_ks = kstest(imagef_valid, 'expon', args=(0, mu))
-        print(f"KS-stat = {stat:.3f}, p-value = {p_ks:.3f}")
 
     ### Cálculo de parámetros estadísticos ###
     def statisticspro(self):
