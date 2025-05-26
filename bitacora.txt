@@ -1,15 +1,54 @@
-2025-05-11 19:04:28,367 - INFO - Se crea una instancia de PropSpeckle en la ruta c:\Proyectos\Speckle\ruta.txt
-2025-05-11 19:04:28,393 - INFO - Se ejecuta el método imagen, leyendo la imagen 4-150-l.tif
-2025-05-11 19:04:28,393 - INFO - El tamaño de la imagen es: (1024, 1280)
-2025-05-11 19:04:28,393 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=1280x1024 at 0x23EEE858910>
-2025-05-11 19:04:28,664 - INFO - Se ejecuta el método histograma
-2025-05-11 19:04:29,040 - INFO - Se crea una instancia de PropSpeckle en la ruta c:\Proyectos\Speckle\ruta.txt
-2025-05-11 19:04:29,072 - INFO - Se ejecuta el método imagen, leyendo la imagen 4-150-l.tif
-2025-05-11 19:04:29,073 - INFO - El tamaño de la imagen es: (1024, 1280)
-2025-05-11 19:04:29,073 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=1280x1024 at 0x23EEE812A50>
-2025-05-11 19:04:30,818 - INFO - Se crea una instancia de PropSpeckle en la ruta c:\Proyectos\Speckle\ruta.txt
-2025-05-11 19:04:30,838 - INFO - Se ejecuta el método imagen, leyendo la imagen 4-150-l.tif
-2025-05-11 19:04:30,838 - INFO - El tamaño de la imagen es: (1024, 1280)
-2025-05-11 19:04:30,838 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=1280x1024 at 0x23EBD1FB070>
-2025-05-11 19:04:32,779 - INFO - Se ejecuta el método autocorrelacion
-2025-05-11 19:04:33,429 - INFO - Se ejecuta el método histograma
+2025-05-26 10:29:31,278 - INFO - Se crea una instancia de PropSpeckle en la ruta c:\Proyectos\Speckle\ruta.txt
+2025-05-26 10:29:31,300 - INFO - Se ejecuta el método imagen, leyendo la imagen imagen_exponencial.png
+2025-05-26 10:29:31,300 - INFO - El tamaño de la imagen es: (1280, 1024)
+2025-05-26 10:29:31,359 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=1024x1280 at 0x126C8936EA0>
+2025-05-26 10:31:25,836 - INFO - Se crea una instancia de PropSpeckle en la ruta c:\Proyectos\Speckle\ruta.txt
+2025-05-26 10:31:25,914 - INFO - Se ejecuta el método imagen, leyendo la imagen imagen_exponencial.png
+2025-05-26 10:31:25,914 - INFO - El tamaño de la imagen es: (1280, 1024)
+2025-05-26 10:31:25,973 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=1024x1280 at 0x126C89F7040>
+2025-05-26 10:31:26,287 - INFO - Se ejecuta el método histograma
+2025-05-26 10:34:32,747 - INFO - Se crea una instancia de PropSpeckle en la ruta c:\Proyectos\Speckle\ruta.txt
+2025-05-26 10:34:32,776 - INFO - Se ejecuta el método imagen, leyendo la imagen imagen_exponencial.png
+2025-05-26 10:34:32,777 - INFO - El tamaño de la imagen es: (1024, 1280)
+2025-05-26 10:34:32,833 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=1280x1024 at 0x126CA4E5590>
+2025-05-26 10:34:33,177 - INFO - Se ejecuta el método histograma
+2025-05-26 10:36:36,318 - INFO - Se crea una instancia de PropSpeckle en la ruta c:\Proyectos\Speckle\ruta.txt
+2025-05-26 10:36:36,358 - INFO - Se ejecuta el método imagen, leyendo la imagen imagen_exponencial.png
+2025-05-26 10:36:36,358 - INFO - El tamaño de la imagen es: (1024, 1280)
+2025-05-26 10:36:36,430 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=1280x1024 at 0x126CA2A5630>
+2025-05-26 10:36:36,744 - INFO - Se ejecuta el método histograma
+2025-05-26 10:36:47,815 - INFO - Se crea una instancia de PropSpeckle en la ruta c:\Proyectos\Speckle\ruta.txt
+2025-05-26 10:36:47,830 - INFO - Se ejecuta el método imagen, leyendo la imagen imagen_exponencial.png
+2025-05-26 10:36:47,830 - INFO - El tamaño de la imagen es: (256, 256)
+2025-05-26 10:36:47,841 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=256x256 at 0x126946B99F0>
+2025-05-26 10:36:48,112 - INFO - Se ejecuta el método histograma
+2025-05-26 11:02:16,966 - INFO - Se crea una instancia de PropSpeckle en la ruta c:\Proyectos\Speckle\ruta.txt
+2025-05-26 11:02:16,995 - INFO - Se ejecuta el método imagen, leyendo la imagen imagen_exponencial.png
+2025-05-26 11:02:16,995 - INFO - El tamaño de la imagen es: (256, 256)
+2025-05-26 11:02:17,010 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=256x256 at 0x126C8CDFE30>
+2025-05-26 11:02:17,372 - INFO - Se ejecuta el método histograma
+2025-05-26 11:02:40,562 - INFO - Se crea una instancia de PropSpeckle en la ruta c:\Proyectos\Speckle\ruta.txt
+2025-05-26 11:02:40,578 - INFO - Se ejecuta el método imagen, leyendo la imagen imagen_exponencial.png
+2025-05-26 11:02:40,578 - INFO - El tamaño de la imagen es: (256, 256)
+2025-05-26 11:02:40,590 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=256x256 at 0x126C8AEBF70>
+2025-05-26 11:02:40,844 - INFO - Se ejecuta el método histograma
+2025-05-26 11:03:05,797 - INFO - Se crea una instancia de PropSpeckle en la ruta c:\Proyectos\Speckle\ruta.txt
+2025-05-26 11:03:05,812 - INFO - Se ejecuta el método imagen, leyendo la imagen imagen_exponencial.png
+2025-05-26 11:03:05,812 - INFO - El tamaño de la imagen es: (256, 256)
+2025-05-26 11:03:05,823 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=256x256 at 0x126C8CDFF70>
+2025-05-26 11:03:06,902 - INFO - Se ejecuta el método histograma
+2025-05-26 11:03:17,663 - INFO - Se crea una instancia de PropSpeckle en la ruta c:\Proyectos\Speckle\ruta.txt
+2025-05-26 11:03:17,678 - INFO - Se ejecuta el método imagen, leyendo la imagen imagen_exponencial.png
+2025-05-26 11:03:17,678 - INFO - El tamaño de la imagen es: (256, 256)
+2025-05-26 11:03:17,696 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=256x256 at 0x126CA4E4410>
+2025-05-26 11:03:17,868 - INFO - Se ejecuta el método histograma
+2025-05-26 11:03:35,044 - INFO - Se crea una instancia de PropSpeckle en la ruta c:\Proyectos\Speckle\ruta.txt
+2025-05-26 11:03:35,062 - INFO - Se ejecuta el método imagen, leyendo la imagen imagen_exponencial.png
+2025-05-26 11:03:35,062 - INFO - El tamaño de la imagen es: (256, 256)
+2025-05-26 11:03:35,073 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=256x256 at 0x126962D65D0>
+2025-05-26 11:03:35,233 - INFO - Se ejecuta el método histograma
+2025-05-26 11:03:55,649 - INFO - Se crea una instancia de PropSpeckle en la ruta c:\Proyectos\Speckle\ruta.txt
+2025-05-26 11:03:55,664 - INFO - Se ejecuta el método imagen, leyendo la imagen imagen_exponencial.png
+2025-05-26 11:03:55,665 - INFO - El tamaño de la imagen es: (256, 256)
+2025-05-26 11:03:55,675 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=256x256 at 0x126CA2A5310>
+2025-05-26 11:03:55,809 - INFO - Se ejecuta el método histograma

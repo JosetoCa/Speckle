@@ -5,7 +5,7 @@
 import numpy as np
 from PIL import Image
 import matplotlib.pyplot as plt
-from scipy.stats import expon, linregress, chisquare, t as t_dist, kstest
+from scipy.stats import expon, linregress, chisquare, t as t_dist, chi2
 import sys
 import logging
 import os
@@ -110,20 +110,7 @@ class PropsSpeckle:
             r_mid = np.argmax(radial_profile < mid_val)
             self.pixel_medio = r_mid  
 
-            # Graficar
-            plt.plot(radial_profile)
-            plt.axhline(mid_val, color='r', linestyle='--', label='Valor medio')
-            plt.axvline(r_mid, color='g', linestyle='--', label=f'R = {r_mid}')
-            plt.title('Perfil radial')
-            plt.legend()
-            plt.show()
-
             print(f"La intensidad cae al valor medio entre máximo y mínimo en un radio de {r_mid} píxeles.")
-
-
-
-
-
 
             H, W = self.shape  # Dimensiones de la imagen
             x = np.linspace(-W//2, W//2, W) * pixel_size  # En micrómetros
@@ -308,22 +295,33 @@ class PropsSpeckle:
 
 
     #### Histograma de la imagen ###
-    def histograma(self, imagen='o'):
+    def histograma(self, imagen='o', bins_ = 256):
         # Genera un histograma de la imagen deseada
+        c = bins_
         if imagen == 'o':
             print("Calculando el histograma de la imagen original...")
             image = self.spec.flatten()
+            mu = self.media
         if imagen == 'm':
             print("Calculando el histograma de la imagen modificada...")
             image = self.imagef[~np.isnan(self.imagef)].flatten()
+            mu = self.mediaf
         if imagen == 'f':
             print("Calculando el histograma de la imagen filtrada...")
             image = self.filtrada.flatten()
+            mu = image.mean()
         # Crear histograma normalizado (como una densidad de probabilidad)
-        plt.hist(image, bins=256, density=True)
+        
+        a,b = np.histogram(image, bins = c, density=True)
+        
+        x = np.linspace(0,b[-1], 100)
+        plt.hist(image, bins = c, density=True, label = 'Histograma de los datos experimentales')
+        plt.plot(x, expon(scale = mu).pdf(x), label = 'curva teórica')
+
         plt.title('Histograma de la imagen')
         plt.xlabel('Niveles de gris')
         plt.ylabel('Frecuencia')
+        plt.legend()
         plt.show()
         logging.info(f"Se ejecuta el método histograma")
     
@@ -340,6 +338,7 @@ class PropsSpeckle:
             imagen = Image.open(ruta_imagen).convert('L') 
             # Con self.spec se guarda la imagen en un arreglo de numpy para procesarla
             self.spec = np.array(imagen)
+            self.media = np.mean(self.spec)
             #Muestra la imagen
             self.shape = self.spec.shape
             logging.info(f"Se ejecuta el método imagen, leyendo la imagen {nombre}")
@@ -352,7 +351,91 @@ class PropsSpeckle:
             print(f"Error: La imagen '{ruta_imagen}' no se encontró.")
         except Exception as e:
             print(f"Ocurrió un error al abrir la imagen: {e}")
-    
+    def miniprueba(self, imagen ='o'):
+
+        if imagen == 'o':
+            datos = self.spec
+            mu = self.media
+            print("Calculando la prueba de bondad de ajuste para la imagen original...")
+        if imagen == 'f':
+            if self.filtrada is None:
+                self.filtro(show = False)
+            print("Calculando la prueba de bondad de ajuste para la imagen filtrada...")    
+            datos = self.filtrada
+            mu = np.mean(self.filtrada)
+        if imagen == 'm':
+            if self.imagef is None:
+                self.modificar(show = False)
+            datos = self.imagef
+            datos = datos[~np.isnan(datos)]
+            mu = self.mediaf
+            print("Calculando la pueba de bondad de ajuste para la imagen modificada...")
+        
+        def chi_sqr(dathistexp,dathistaj):
+            return sum(((dathistexp-dathistaj)**2)/(dathistaj))
+        valores, frecuencias = np.unique(datos[~np.isnan(datos)], return_counts=True)
+        
+        
+        
+        # chi=chi_sqr(frecuencias, np.sum(frecuencias)*expon(scale=mu).pdf(valores) )
+        # print(chi)
+        
+
+        # df = len(valores)-2
+        # alpha = 0.05
+        # plt.bar(valores, frecuencias, width=np.ones(len(valores)), edgecolor='black',label='Observado')
+        # plt.bar(valores, np.sum(frecuencias)*expon(scale=mu).pdf(valores), width=np.ones(len(valores)), edgecolor='red',alpha=0.5,label='Esperado')
+        # plt.xlabel("Nivel de gris")
+        # plt.ylabel("Frecuencia")
+        # plt.title("Histogramas para la prueba de bondad")
+        # plt.grid(True)
+        # plt.legend()
+        # plt.show()
+        
+        # chi2_critico = chi2.ppf(1-alpha, df)
+        # print(f"Valor crítico de chi2 para {df} grados de libertad y alpha={alpha}: {chi2_critico:.2f}")
+        # if chi < chi2_critico:
+        #     print("No se rechaza la hipótesis nula: no hay nada que, estadísticamente, me diga que no se sigue una distribución exponencial negativa.")
+        # else:
+        #     print("Se rechaza la hipótesis nula: estadísticamente puedo decir que los datos no sigue una distribución exponencial negativa.")
+
+
+        max_bins = 50
+        bins = max_bins
+
+        alpha = 0.05
+        while bins > 1:
+            counts, bin_edges = np.histogram(datos, bins=bins)
+            if all(counts >= 5):
+                break
+            bins -= 1
+        observed, _ = np.histogram(datos, bins=bin_edges)
+        #observed = observed / np.sum(observed)  # Normalizar
+        cdf_values = expon.cdf(bin_edges, scale=mu)
+        expected = np.sum(observed)*np.diff(cdf_values)
+        bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
+
+        df = bins-2
+
+        plt.bar(bin_centers, observed, width=np.diff(bin_edges), edgecolor='black',label='Observado')
+        plt.bar(bin_centers, expected, width=np.diff(bin_edges), edgecolor='red',alpha=0.5,label='Esperado')
+        plt.xlabel("Nivel de gris")
+        plt.ylabel("Frecuencia")
+        plt.title("Histogramas para la prueba de bondad")
+        plt.grid(True)
+        plt.legend()
+        plt.show()
+        chi=chi_sqr(observed, expected)
+        print(chi)
+
+
+
+        chi2_critico = chi2.ppf(1-alpha, df)
+        print(f"Valor crítico de chi2 para {df} grados de libertad y alpha={alpha}: {chi2_critico:.2f}")
+        if chi < chi2_critico:
+            print("No se rechaza la hipótesis nula: no hay nada que, estadísticamente, me diga que no se sigue una distribución exponencial negativa.")
+        else:
+            print("Se rechaza la hipótesis nula: estadísticamente puedo decir que los datos no sigue una distribución exponencial negativa.")
     
     ###    ###
     def modificar(self, show=True):
@@ -431,7 +514,7 @@ class PropsSpeckle:
             image = self.filtrada.flatten()
         
         y, x = np.histogram(image, bins=256, range=None, density=True, weights=None)
-        x = x[:-1]  # Calcular los centros de los bins
+        x = x[:-1]
         
         p_x = y # Densidad de probabilidad de X
         mask = p_x != 0 # Esta mascara nos permite quedarnos únicamente con los datos para los que poseemos información
@@ -439,13 +522,6 @@ class PropsSpeckle:
         Y_0 = np.log(p_x[mask])
         
         Y = np.log(p_x) #Variable lineal
-
-        plt.scatter(x,Y)
-        plt.title('Diagrama de dispersión de los datos')
-        plt.xlabel('Intensidad del pixel')
-        plt.ylabel('Log(Probabilidad)')
-
-        plt.show()
 
         #Estadigrafos de nuestra regresión
 
@@ -525,12 +601,14 @@ class PropsSpeckle:
 
         # Paso 2: calcular observados y esperados
         observed, _ = np.histogram(image, bins=bin_edges)
+        
 
         # Calcular frecuencias esperadas usando la distribución exponencial negativa acumulada
         cdf_values = expon.cdf(bin_edges, scale=mu)
         expected = np.diff(cdf_values) * len(image)
+        
         # Normalizar esperados
-        expected = expected * (observed.sum() / expected.sum())
+        #expected = expected * (observed.sum() / expected.sum())
 
         # Calcular las posiciones centrales de los bins
         bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
@@ -546,7 +624,7 @@ class PropsSpeckle:
         plt.show()
 
         # Paso 3: aplicar prueba chi-cuadrado
-        chi2_stat, p_value = chisquare(f_obs=observed, f_exp=expected)
+        chi2_stat, p_value = chisquare(f_obs=observed, f_exp=expected, ddof=1 , sum_check=False)
 
         print('media = {:.2f}'.format(mu))
         print('El valor de chi2 es {:.2f} y el valor p es {:.1f} %. El número de intervalos es {}'.format(chi2_stat, 100*p_value,bins))
