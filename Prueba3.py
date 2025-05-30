@@ -1,27 +1,37 @@
-## Prueba para verificar el uso de la Prueba de Bondad ##
-
-import PropsSpeckle as ps
 import numpy as np
 import matplotlib.pyplot as plt
-import os
+import PropsSpeckle as ps
 
-## Para verificar el directorio de trabajo, donde se guarda bitaora.txt
-print("Directorio actual:", os.getcwd())
+seed = 42  # Semilla para reproducibilidad
 
-# Import the PropsSpeckle module
-espacio = ps.PropsSpeckle()
-# Parámetros del módulo
-print('Versión:', espacio.version)
-print('Nombre:', espacio.name)
-print('Ruta',espacio.primera_linea)  # None
+np.random.seed(seed)
+import numpy as np
+import matplotlib.pyplot as plt
+from PIL import Image
 
-#Se llama una imagen, en este caso se da el nombre
-espacio.imagen('4-150-l.tif',show=True)
-espacio.modificar()
-#espacio.autocorrelacion(imagen='o')
-#espacio.autocorrelacion(imagen='m')
-espacio.filtro()
-espacio.pruebaBondad(imagen='f')
+# Parámetros
+mu = 2.0
+size = (256, 256)
+
+# Generar imagen con distribución exponencial negativa escalada 1/mu
+image = np.random.exponential(scale=1/mu, size=size)
+
+# Normalizar al rango [0, 255]
+image_normalized = image - image.min()
+image_normalized /= image_normalized.max()
+image_scaled = np.round(image_normalized * 255).astype(np.uint8) 
+
+# Guardar imagen como PNG
+img = Image.fromarray(image_scaled)
+img.save('C:\\Proyectos\\Speckle\\images\\imagen_exponencial.png')
+
+espacio1 =  ps.PropsSpeckle()
+espacio1.imagen('imagen_exponencial.png',show=True)
+
+espacio1.prueba(imagen = 'o')
+
+
+espacio1.pruebaBondad(imagen = 'o')
 
 
 
