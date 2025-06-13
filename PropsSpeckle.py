@@ -351,6 +351,8 @@ class PropsSpeckle:
             print(f"Error: La imagen '{ruta_imagen}' no se encontró.")
         except Exception as e:
             print(f"Ocurrió un error al abrir la imagen: {e}")
+
+
     def miniprueba(self, imagen ='o'):
 
         if imagen == 'o':
@@ -628,6 +630,53 @@ class PropsSpeckle:
 
         print('media = {:.2f}'.format(mu))
         print('El valor de chi2 es {:.2f} y el valor p es {:.1f} %. El número de intervalos es {}'.format(chi2_stat, 100*p_value,bins))
+
+    ### Comparación de histogramas por similitud de coseno ###
+    def histograma_similaridad(self, imagen='o', bins_=256):
+        # Genera un histograma de la imagen deseada y calcula la similitud de coseno
+        c = bins_
+        if imagen == 'o':
+            print("Calculando el histograma de la imagen original...")
+            image = self.spec.flatten()
+            mu = self.media
+        if imagen == 'm':
+            print("Calculando el histograma de la imagen modificada...")
+            image = self.imagef[~np.isnan(self.imagef)].flatten()
+            mu = self.mediaf
+        if imagen == 'f':
+            print("Calculando el histograma de la imagen filtrada...")
+            image = self.filtrada.flatten()
+            mu = image.mean()
+
+        # Crear histograma normalizado (como una densidad de probabilidad)
+        # Paso 2: calcular observados y esperados
+        observed, bin_edges = np.histogram(image, bins=c)
+
+        # Calcular frecuencias esperadas usando la distribución exponencial negativa acumulada
+        cdf_values = expon.cdf(bin_edges, scale=mu)
+        expected = np.diff(cdf_values) * len(image)
+
+        # Calcular las posiciones centrales de los bins
+        bin_centers = (bin_edges[:-1] + bin_edges[1:]) / 2
+
+        # Calcular la similitud de coseno
+        cos_sim = np.dot(observed, expected) / (np.linalg.norm(observed) * np.linalg.norm(expected))
+        print(f"Similitud de coseno entre los histogramas: {cos_sim:.4f}")
+
+        # Graficar
+        plt.bar(bin_centers, observed, width=np.diff(bin_edges), edgecolor='black',label='Observado')
+        plt.bar(bin_centers, expected, width=np.diff(bin_edges), edgecolor='red',alpha=0.5,label='Esperado')
+        plt.xlabel("Nivel de gris")
+        plt.ylabel("Frecuencia")
+        plt.title("Histogramas para la prueba de similitud coseno")
+        plt.text(0.05, 0.95, f'Similitud de coseno: {cos_sim:.4f}', transform=plt.gca().transAxes, fontsize=14,
+                 verticalalignment='top', bbox=dict(facecolor='white', alpha=0.5, edgecolor='black'))
+        plt.grid(True)
+        plt.legend()
+        plt.show()
+
+        logging.info(f"Se ejecuta el método histograma_similaridad")
+        return cos_sim
 
     ### Cálculo de parámetros estadísticos ###
     def statisticspro(self):
