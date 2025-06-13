@@ -1,0 +1,3 @@
+[submodule "Stokes-parameters"]
+	path = Stokes-parameters
+	url = https://github.com/JosetoCa/Stokes-parameters
