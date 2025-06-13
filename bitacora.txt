@@ -1,10 +1,10 @@
-2025-06-13 15:23:38,238 - INFO - Se crea una instancia de PropSpeckle en la ruta f:\AREA54\REPOSITORIO\Speckle\ruta.txt
-2025-06-13 15:23:38,387 - INFO - Se ejecuta el método imagen, leyendo la imagen 4-150-1.tif
-2025-06-13 15:23:38,387 - INFO - El tamaño de la imagen es: (1024, 1280)
-2025-06-13 15:23:38,388 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=1280x1024 at 0x2400D104A90>
-2025-06-13 15:23:38,405 - INFO - Se ejecuta el método statisticspro
-2025-06-13 15:23:38,406 - INFO - Valor promedio de la imagen = 23.96499252319336
-2025-06-13 15:23:38,406 - INFO - Valor desviación estándar de la imagen 19.692468655511327
-2025-06-13 15:23:38,406 - INFO - Valor varianza de la imagen 387.79332174829614
-2025-06-13 15:23:38,406 - INFO - Valor contraste de la imagen 0.821718122234043
-2025-06-13 15:24:15,154 - INFO - Se ejecuta el método histograma_similaridad
+2025-06-13 16:31:56,065 - INFO - Se crea una instancia de PropSpeckle en la ruta f:\AREA54\REPOSITORIO\Speckle\ruta.txt
+2025-06-13 16:31:56,258 - INFO - Se ejecuta el método imagen, leyendo la imagen 4-150-1.tif
+2025-06-13 16:31:56,258 - INFO - El tamaño de la imagen es: (1024, 1280)
+2025-06-13 16:31:56,258 - INFO - El nombre de la imagen de trabajo es: <PIL.Image.Image image mode=L size=1280x1024 at 0x276863D4A00>
+2025-06-13 16:32:06,486 - INFO - Se ejecuta el método statisticspro
+2025-06-13 16:32:06,487 - INFO - Valor promedio de la imagen = 23.96499252319336
+2025-06-13 16:32:06,487 - INFO - Valor desviación estándar de la imagen 19.692468655511327
+2025-06-13 16:32:06,487 - INFO - Valor varianza de la imagen 387.79332174829614
+2025-06-13 16:32:06,488 - INFO - Valor contraste de la imagen 0.821718122234043
+2025-06-13 16:33:05,015 - INFO - Se ejecuta el método histograma_similaridad
